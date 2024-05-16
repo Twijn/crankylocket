@@ -1,0 +1,66 @@
+body {
+    background-color: limegreen;
+}
+
+#inactive {
+    background-color: #d64040;
+    width: 1em;
+    height: 1em;
+    border-radius: .5em;
+    position: fixed;
+    right: .75em;
+    bottom: .75em;
+    box-shadow: 0 0 18px rgba(0, 0, 0, 0.4) inset;
+}
+
+#live-reaction {
+    font-family: "Archivo Black", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    text-align: center;
+
+    color: white;
+    display: inline-block;
+    -webkit-text-stroke: 1.1px black;
+    font-weight: 700;
+
+    transform: scale(.8);
+
+    transition: 250ms;
+}
+
+#live-reaction.out {
+    opacity: 0;
+    transform: scale(.65);
+}
+
+#live-reaction h1 {
+    margin: .3em;
+    font-weight: 700;
+    transform: scale(1,2);
+    text-transform: uppercase;
+    text-wrap: nowrap;
+}
+
+#live-reaction h1 span {
+    color: red;
+}
+
+#live-reaction > div {
+    display: grid;
+    align-items: center;
+    grid-template-columns: repeat(2, 1fr);
+    padding: 1rem;
+    border: 1px solid white;
+    font-size: 4em;
+}
+
+#live-reaction > * {
+    grid-column: span 1;
+}
+
+#live-reaction img {
+    width: 100%;
+    aspect-ratio: 1/1;
+}

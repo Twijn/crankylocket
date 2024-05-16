@@ -1,0 +1,34 @@
+{
+  "name": "crankylocket",
+  "version": "1.0.0",
+  "description": "Commission work for crankylocket",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Twijn/crankylocket.git"
+  },
+  "author": "Twijn",
+  "license": "SEE LICENSE IN LICENSE",
+  "bugs": {
+    "url": "https://github.com/Twijn/crankylocket/issues"
+  },
+  "homepage": "https://github.com/Twijn/crankylocket#readme",
+  "dependencies": {
+    "@mkody/twitch-emoticons": "^2.8.7",
+    "@twurple/api": "^7.1.0",
+    "@twurple/auth": "^7.1.0",
+    "@twurple/chat": "^7.1.0",
+    "@twurple/eventsub-ws": "^7.1.0",
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.6",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-ws": "^5.0.2",
+    "mongoose": "^8.3.2"
+  }
+}

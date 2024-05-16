@@ -1,0 +1,46 @@
+:root {
+    --primary-theme-color: #4242e8;
+    --secondary-theme-color: #5c5cf0;
+    --shadow: 2px 2px 7px rgba(0,0,0,0.1);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: var(--primary-theme-color);
+    color: #ffffff;
+    padding: .8em;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.6em;
+    font-weight: 400;
+}
+
+.section {
+    margin: .8em;
+    padding: .8em;
+    background-color: #f6f6f6;
+    border-radius: 0 5px 5px 5px;
+}
+
+.section h2 {
+    font-size: 1.2em;
+    font-weight: 300;
+    margin: 0 0 .8em 0;
+}
+
+.color {
+    width: 1em;
+    height: 1em;
+    margin: 0 auto;
+}
+
+tr.unassignable {
+    background-color: #f6d0d0;
+}

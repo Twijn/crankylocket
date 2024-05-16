@@ -1,0 +1,43 @@
+label {
+    margin: .8em;
+}
+
+input[type=text],
+input[type=number],
+select {
+    display: block;
+    width: calc(100% - 3.2em);
+    padding: .6em .8em;
+    margin: .6em .8em;
+    background-color: white;
+    border: 1px solid #eeeeee;
+    border-radius: 3px;
+}
+
+select {
+    width: 100%;
+    display: inline-block;
+    width: auto;
+}
+
+input[type=submit],
+button.button {
+    background-color: var(--secondary-theme-color);
+    color: #ffffff;
+    font-size: 1em;
+    font-weight: 500;
+    padding: .4em .6em;
+    margin: .4em;
+    border: none;
+    box-shadow: var(--shadow);
+    border-radius: 3px;
+    transition: 200ms;
+}
+
+input[type=submit]:hover,
+input[type=submit]:focus,
+button.button:hover,
+button.button:focus {
+    box-shadow: 2px 2px 7px transparent;
+    background-color: var(--primary-theme-color);
+}

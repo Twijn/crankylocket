@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("../partials/head") %>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/assets/css/overlay.css">
+
+    <script src="/assets/js/overlay.js"></script>
+<% urls.forEach(url => { %>
+    <link rel="prefetch" href="<%= url %>"><% }) %>
+
+    <title>Overlay</title>
+</head>
+<body>
+    <div id="live-reaction" style="display: none;">
+        <h1>
+            Live <span id="reaction-name">Wisp</span> Reaction
+        </h1>
+        <div id="live-body">
+            <img src="cockboy" id="reaction-image">
+            <div id="reaction-count">x3</div>
+        </div>
+    </div>
+    <div id="inactive"></div>
+</body>
+</html>

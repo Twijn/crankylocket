@@ -1,0 +1,24 @@
+table {
+    border-collapse: collapse;
+    width: 100%;
+
+}
+
+thead th {
+    background-color: rgba(0,0,0,0.03);
+}
+
+td, th {
+    padding: .4em;
+    vertical-align: top;
+    text-align: center;
+}
+
+td small, th small {
+    display: block;
+    max-width: 7em;
+    font-weight: 400;
+    font-size: .8em;
+    margin: .4em auto 0 auto;
+    color: #1f1f1f;
+}
