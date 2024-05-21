@@ -20,7 +20,9 @@ module.exports = function(apiClient) {
 
     const roleHandler = async redemption => {
         const cancelRedemption = message => {
-            apiClient.chat.sendChatMessage(redemption.broadcasterId, message).catch(console.error);
+            apiClient.asIntent(["chat"], ctx => {
+                ctx.chat.sendChatMessage(redemption.broadcasterId, message).catch(console.error);
+            });
         }
 
         const endDeg = utils.generateRandomNumber(MIN_DEG, MAX_DEG, true);
