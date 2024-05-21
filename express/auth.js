@@ -6,7 +6,7 @@ const generateRandomString = require("../utils/generateRandomString");
 
 const router = express.Router();
 
-const TWITCH_URI = `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${process.env.TWITCH_CLIENT_ID}&redirect_uri=${process.env.EXPRESS_URI}auth&scope=user%3Aread%3Aemail+chat%3Aedit+chat%3Aread+channel%3Aread%3Aredemptions`;
+const TWITCH_URI = `https://id.twitch.tv/oauth2/authorize?response_type=code&client_id=${process.env.TWITCH_CLIENT_ID}&redirect_uri=${process.env.EXPRESS_URI}auth&scope=user%3Aread%3Aemail+chat%3Aedit+chat%3Aread+channel%3Aread%3Aredemptions+user%3Awrite%3Achat+channel%3Amanage%3Aredemptions`;
 
 router.get("/", (req, res) => {
     if (req?.query?.code) {
