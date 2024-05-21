@@ -2,12 +2,14 @@ const express = require("express");
 const router = express.Router();
 
 const { TwitchToken, TwitchReward, DiscordRole, TwitchEmote } = require("../../../schemas");
+const utils = require("../../../utils");
 const fetcher = require("../../../twitch/emotes");
 
 const updateChannels = require("./updateChannels");
 const updateEmotes = require("./updateEmotes");
 const updateRedemptions = require("./updateRedemptions");
 const updateRoles = require("./updateRoles");
+const updateSettings = require("./updateSettings");
 
 router.get("/", async (req, res) => {
     const tokens = await TwitchToken.find({});
@@ -17,6 +19,7 @@ router.get("/", async (req, res) => {
         ["code", 1],
         ["platform", 1],
     ]);
+    const settings = await utils.settings.get();
 
     let allEmotes = Array.from(fetcher.emotes.values());
 
@@ -70,6 +73,7 @@ router.get("/", async (req, res) => {
         broadcasterRewards: rewards,
         emotes, allEmotes,
         emoteCount, emoteTime, maxPerUser, lastingTime,
+        settings,
         error, info,
     });
 });
@@ -81,5 +85,6 @@ router.use("/channels", updateChannels);
 router.use("/emotes", updateEmotes);
 router.use("/redemptions", updateRedemptions);
 router.use("/roles", updateRoles);
+router.use("/settings", updateSettings);
 
 module.exports = router;
