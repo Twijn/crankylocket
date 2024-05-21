@@ -78,28 +78,62 @@
             </table>
             <input type="submit" value="Update">
         </form>
-        <form method="POST" action="/roles" class="col col-6 section">
-            <h2>Manage Roles</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Color</th>
-                        <th>Name</th>
-                        <th>Role Wheel</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% discordRoles.forEach(role => { %>
-                    <tr<%- role.assignable ? "" : ' class="unassignable" title="This role is placed above the bot role and may not be assigned by the bot."' %>>
-                        <td><div class="color" style="background-color: <%= role.color %>;"></div></td>
-                        <td><%= role.name %></td>
-                        <td><input type="checkbox" name="roleAdd[<%= role._id %>]" id="<%= role._id %>"<%- role.settings.roleAdd ? ' checked="checked"' : "" %><%- role.assignable ? "" : ' disabled="disabled"' %>></td>
-                    </tr>
-                    <% }) %>
-                </tbody>
-            </table>
-            <input type="submit" value="Update">
-        </form>
+        <div class="col col-6">
+            <form method="POST" action="/roles" class="section">
+                <h2>Manage Roles</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Color</th>
+                            <th>Name</th>
+                            <th>Wheel Color</th>
+                            <th>Wheel Text Color</th>
+                            <th>Role Wheel</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% discordRoles.forEach(role => { %>
+                        <tr<%- role.assignable ? "" : ' class="unassignable" title="This role is placed above the bot role and may not be assigned by the bot."' %>>
+                            <td><div class="color" style="background-color: <%= role.color %>;"></div></td>
+                            <td><%= role.name %></td>
+                            <td><input type="color" name="wheelColor[<%= role._id %>]" id="color-<%= role._id %>" value="<%- role.settings.wheelColor ? role.settings.wheelColor : role.color %>"<%- role.assignable ? "" : ' disabled="disabled"' %>></td>
+                            <td><input type="color" name="wheelTextColor[<%= role._id %>]" id="color-<%= role._id %>" value="<%- role.settings.wheelTextColor ? role.settings.wheelTextColor : "#ffffff" %>"<%- role.assignable ? "" : ' disabled="disabled"' %>></td>
+                            <td><input type="checkbox" name="roleAdd[<%= role._id %>]" id="roleadd-<%= role._id %>"<%- role.settings.roleAdd ? ' checked="checked"' : "" %><%- role.assignable ? "" : ' disabled="disabled"' %>></td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+                <input type="submit" value="Update">
+            </form>
+            <form method="POST" action="/settings" class="section">
+                <h2>Settings</h2>
+                <div class="container container-sm">
+                    <div class="col col-6">
+                        <label for="wheelPosition">Wheel Position</label>
+                    </div>
+                    <div class="col col-6">
+                        <label for="reactionPosition">Live Reaction Position</label>
+                    </div>
+                    <div class="col col-6">
+                        <select name="wheelPosition" id="wheelPosition">
+                            <option value="4"<%- settings.wheelCss === "left:2em;top:2em;" ? ' selected="selected"' : "" %>>Top Left</option>
+                            <option value="1"<%- settings.wheelCss === "right:2em;top:2em;" ? ' selected="selected"' : "" %>>Top Right</option>
+                            <option value="2"<%- settings.wheelCss === "right:2em;bottom:2em;" ? ' selected="selected"' : "" %>>Bottom Right</option>
+                            <option value="3"<%- settings.wheelCss === "left:2em;bottom:2em;" ? ' selected="selected"' : "" %>>Bottom Left</option>
+                        </select>
+                    </div>
+                    <div class="col col-6">
+                        <select name="reactionPosition" id="reactionPosition">
+                            <option value="4"<%- settings.reactionCss === "left:2em;top:2em;" ? ' selected="selected"' : "" %>>Top Left</option>
+                            <option value="1"<%- settings.reactionCss === "right:2em;top:2em;" ? ' selected="selected"' : "" %>>Top Right</option>
+                            <option value="2"<%- settings.reactionCss === "right:2em;bottom:2em;" ? ' selected="selected"' : "" %>>Bottom Right</option>
+                            <option value="3"<%- settings.reactionCss === "left:2em;bottom:2em;" ? ' selected="selected"' : "" %>>Bottom Left</option>
+                        </select>
+                    </div>
+                </div>
+                <input type="submit" value="Update Settings">
+            </form>
+        </div>
         <div class="col col-6">
             <div class="section">
                 <h2>Manage Emotes</h2>
