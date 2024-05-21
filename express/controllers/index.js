@@ -3,8 +3,10 @@ const router = express.Router();
 
 const management = require("./management");
 const overlay = require("./overlay");
+const json = require("./json");
 
 router.use("/overlay", overlay);
+router.use("/json", json);
 
 router.use((req, res, next) => {
     if (req?.cookies?.session) {
