@@ -16,13 +16,32 @@
     <title>Overlay</title>
 </head>
 <body>
-    <div id="live-reaction" style="display: none;">
+    <div id="live-reaction" style="display: none;<%= settings.reactionCss %>">
         <h1>
             Live <span id="reaction-name">Wisp</span> Reaction
         </h1>
         <div id="live-body">
-            <img src="cockboy" id="reaction-image">
+            <img src="null" id="reaction-image">
             <div id="reaction-count">x3</div>
+        </div>
+    </div>
+    <div id="role-wheel" style="display: none;<%= settings.wheelCss %>">
+        <h1>
+            Spinning Wheel for <span class="username"></span>
+        </h1>
+        <div id="wheel-container">
+            <canvas id="wheel" width="300px" height="300px"></canvas>
+        </div>
+    </div>
+    <div id="role-selected" style="display: none;width: 300px;height: 300px;<%= settings.wheelCss %>">
+        <div class="centered">
+            <div class="user">
+                <img src="null" class="user-image">
+                <div>
+                    <div class="user-name"></div>
+                    <div class="role"></div>
+                </div>
+            </div>
         </div>
     </div>
     <div id="inactive"></div>

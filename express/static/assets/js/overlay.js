@@ -1,9 +1,88 @@
+$(function() {
+
+const WS_URI = "ws://localhost:3393/ws";
+
 let websocket;
 
 let hideTimeout = null;
 
+function deg2rad(deg) {
+    return deg * Math.PI / 180;
+}
+
+let roles = [];
+
+function getRoles() {
+    $.get("/json/roles", data => {
+        roles = data;
+        drawCanvas();
+    })
+}
+
+const ctx = document.getElementById("wheel").getContext("2d");
+const width = document.getElementById("wheel").width;
+const center = width / 2;
+
+function drawSlice(color, deg, sliceSize) {
+    ctx.moveTo(center, center);
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    ctx.arc(center, center, center, deg2rad(deg), deg2rad(deg + sliceSize));
+    ctx.lineTo(center, center);
+    ctx.closePath();
+    ctx.fill();
+}
+
+function drawText(deg, text, color) {
+    ctx.save();
+    ctx.translate(center, center);
+    ctx.rotate(deg2rad(deg));
+    ctx.fillStyle = color;
+    ctx.font = "20px Arial";
+    ctx.fillText(text, 15, 10, center - 20);
+    ctx.restore();
+}
+
+function drawCanvas() {
+    let sliceSize = 360 / roles.length;
+    let deg = 0;
+
+    roles.forEach(role => {
+        drawSlice(role.wheelColor, deg, sliceSize);
+        drawText(deg + (sliceSize / 2), role.name, role.wheelTextColor);
+        deg += sliceSize;
+    })
+
+}
+
+function spinWheel(endDeg, cb) {
+    // adds randomness on when the wheel starts to slow down.
+    const rand = (Math.random() * .2) + .9;
+
+    let deg = 0;
+    let degDiff = 20;
+    const interval = setInterval(() => {
+        $("#wheel").css("transform",`rotate(${deg}deg)`);
+
+        // endDeg has been reached. Clear the interval and call the callback
+        if (deg >= endDeg) {
+            cb();
+            return clearInterval(interval);
+        }
+        deg += degDiff;
+
+        // if the wheel is 7 * .9 to 7 * 1.1 (random) spins away from stopping, start slowing it down by
+        // decrementing the degDiff value.
+        if (endDeg - deg < 360 * 7 * rand) {
+            degDiff = (endDeg - deg) / 360 / 6.75 * 20;
+        }
+
+        degDiff = Math.max(degDiff, .01);
+    }, 5);
+}
+
 function initWebsocket() {
-    websocket = new WebSocket("ws://localhost:3393/ws");
+    websocket = new WebSocket(WS_URI);
 
     websocket.onmessage = function(msg) {
         try {
@@ -31,6 +110,36 @@ function initWebsocket() {
                         $("#live-reaction").hide();
                     }, 250);
                 }, 3500);
+            } else if (data.type === "role-wheel") {
+                $("#role-wheel").addClass("out");
+                $("#role-wheel").show();
+                $("#wheel").css("transform","rotate(0deg)");
+                $("#role-wheel .username").text(data.user.displayName);
+                setTimeout(() => {
+                    $("#role-wheel").removeClass("out");
+                }, 10);
+                setTimeout(() => {
+                    spinWheel(data.endDeg, () => {
+                        $("#role-wheel").addClass("out");
+                        $("#role-selected").addClass("out");
+                        $("#role-selected").show();
+                        $("#role-selected .user-image").attr("src", data.user.avatar);
+                        $("#role-selected .user-name").text(data.user.displayName);
+                        $("#role-selected .role").text(data.role.name);
+                        $("#role-selected .role").css("background-color", data.role.backgroundColor);
+                        $("#role-selected .role").css("color", data.role.textColor);
+                        setTimeout(() => {
+                            $("#role-selected").removeClass("out");
+                        }, 10);
+                        setTimeout(() => {
+                            $("#role-selected").addClass("out");
+                            setTimeout(() => {
+                                $("#role-wheel").hide();
+                                $("#role-selected").hide();
+                            }, 250);
+                        }, 5500);
+                    });
+                }, 1500);
             }
         } catch(err) {
             console.error(err);
@@ -50,3 +159,6 @@ function initWebsocket() {
 }
 
 initWebsocket();
+getRoles();
+
+})
