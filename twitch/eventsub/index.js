@@ -20,6 +20,7 @@ module.exports = function(apiClient) {
 
     const roleHandler = async redemption => {
         const cancelRedemption = message => {
+            redemption.updateStatus("CANCELED").catch(console.error);
             apiClient.asIntent(["chat"], ctx => {
                 ctx.chat.sendChatMessage(redemption.broadcasterId, message).catch(console.error);
             });
@@ -91,6 +92,7 @@ module.exports = function(apiClient) {
                     avatar: user.displayAvatarURL({size: 128}),
                 },
             });
+            redemption.updateStatus("FULFILLED").catch(console.error);
         }, err => {
             console.error(err);
             cancelRedemption("Unable to add the role to you!");
