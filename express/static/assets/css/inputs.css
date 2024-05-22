@@ -21,7 +21,7 @@ select {
 }
 
 input[type=submit],
-button.button {
+.button {
     background-color: var(--secondary-theme-color);
     color: #ffffff;
     font-size: 1em;
@@ -34,10 +34,15 @@ button.button {
     transition: 200ms;
 }
 
+a.button {
+    text-decoration: none;
+    display: inline-block;
+}
+
 input[type=submit]:hover,
 input[type=submit]:focus,
-button.button:hover,
-button.button:focus {
+.button:hover,
+.button:focus {
     box-shadow: 2px 2px 7px transparent;
     background-color: var(--primary-theme-color);
 }
