@@ -7,7 +7,7 @@ const fetcher = require("../../../twitch/emotes");
 
 const updateChannels = require("./updateChannels");
 const updateEmotes = require("./updateEmotes");
-const updateRedemptions = require("./updateRedemptions");
+const updateRewards = require("./updateRewards");
 const updateRoles = require("./updateRoles");
 const updateSettings = require("./updateSettings");
 
@@ -83,7 +83,7 @@ router.use(bodyParser.urlencoded({extended: true}));
 
 router.use("/channels", updateChannels);
 router.use("/emotes", updateEmotes);
-router.use("/redemptions", updateRedemptions);
+router.use("/rewards", updateRewards);
 router.use("/roles", updateRoles);
 router.use("/settings", updateSettings);
 
