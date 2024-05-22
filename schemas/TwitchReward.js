@@ -6,6 +6,10 @@ const schema = new mongoose.Schema({
     backgroundColor: String,
     broadcaster: String,
     cost: Number,
+    addedByBot: {
+        type: Boolean,
+        default: false,
+    },
     lastSeen: {
         type: Date,
         default: Date.now,
