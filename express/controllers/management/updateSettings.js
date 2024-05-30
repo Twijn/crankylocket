@@ -11,6 +11,9 @@ router.post("/", async (req, res) => {
     if (!req?.body?.reactionPosition) {
         return res.redirect("/?error=Missing+parameter");
     }
+    if (!req?.body?.reactionSetting) {
+        return res.redirect("/?error=Missing+parameter");
+    }
 
     if (req.body.wheelPosition == 1) {
         settings.wheelCss = "right:2em;top:2em;";
@@ -31,6 +34,8 @@ router.post("/", async (req, res) => {
     } else if (req.body.reactionPosition == 4) {
         settings.reactionCss = "left:2em;top:2em;";
     }
+
+    settings.reactionSetting = req.body.reactionSetting;
 
     await settings.save();
 
