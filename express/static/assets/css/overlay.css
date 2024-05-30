@@ -16,7 +16,7 @@ body {
 #live-reaction,
 #role-wheel,
 #role-selected {
-    transition: 250ms;
+    transition: 500ms;
 }
 
 #live-reaction {
@@ -38,7 +38,19 @@ body {
 
 .out {
     opacity: 0;
-    transform: scale(.65);
+    transform: scale(.6);
+}
+
+.bounce {
+    transform: scale(1.2);
+}
+
+#live-reaction.out {
+    transform: scale(.5);
+}
+
+#live-reaction.bounce {
+    transform: scale(1);
 }
 
 #live-reaction h1 {
@@ -117,8 +129,10 @@ body {
 #role-selected .centered {
     background-color: #343237;
     color: #fff;
+    border: 1px solid #252328;
     padding: .8em 1em;
     border-radius: 1em;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
 }
 
 #role-selected .user {

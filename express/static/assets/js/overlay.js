@@ -89,18 +89,26 @@ function initWebsocket() {
             const data = JSON.parse(msg.data);
             
             if (data.type === "live-reaction") {
-                $("#live-reaction").addClass("out");
-                $("#live-reaction").show();
-
                 $("#reaction-name").text(data.emote.displayName);
                 $("#reaction-image").attr("src", data.emote.url);
                 $("#reaction-count").text("x" + data.count);
-                setTimeout(() => {
-                    $("#live-reaction").removeClass("out");
-                }, hideTimeout ? 75 : 5);
 
                 if (hideTimeout) {
                     clearTimeout(hideTimeout);
+                    hideTimeout = null;
+
+                    $("#live-reaction").addClass("bounce");
+
+                    setTimeout(() => {
+                        $("#live-reaction").removeClass("bounce");
+                    }, 100);
+                } else {
+                    $("#live-reaction").addClass("out");
+                    $("#live-reaction").show();
+
+                    setTimeout(() => {
+                        $("#live-reaction").removeClass("out");
+                    }, 5);
                 }
 
                 hideTimeout = setTimeout(() => {
