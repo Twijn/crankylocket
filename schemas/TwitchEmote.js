@@ -19,24 +19,6 @@ const schema = new mongoose.Schema({
         type: Boolean,
         default: true,
     },
-    requirements: {
-        emoteCount: {
-            type: Number,
-            default: 3,
-        },
-        emoteTime: {
-            type: Number,
-            default: 10,
-        },
-        maxPerUser: {
-            type: Number,
-            default: 2,
-        },
-        lastingTime: {
-            type: Number,
-            default: 10,
-        },
-    }
 });
 
 module.exports = mongoose.model("TwitchEmote", schema);

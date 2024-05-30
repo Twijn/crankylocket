@@ -23,21 +23,14 @@ router.get("/", async (req, res) => {
 
     let allEmotes = Array.from(fetcher.emotes.values());
 
-    let emoteCount = 0;
-    let emoteTime = 0;
-    let maxPerUser = 0;
-    let lastingTime = 0;
-
-    if (emotes.length > 0) {
-        emoteCount = emotes[0].requirements.emoteCount;
-        emoteTime = emotes[0].requirements.emoteTime;
-        maxPerUser = emotes[0].requirements.maxPerUser;
-        lastingTime = emotes[0].requirements.lastingTime;
-    }
-
     allEmotes = allEmotes.filter(x => !emotes.find(y => y._id === x.id));
     allEmotes.sort((a, b) => a.code - b.code);
     allEmotes.sort((a, b) => a.type - b.type);
+
+    const emoteCount = settings.emoteRequirements.emoteCount;
+    const emoteTime = settings.emoteRequirements.emoteTime;
+    const maxPerUser = settings.emoteRequirements.maxPerUser;
+    const lastingTime = settings.emoteRequirements.lastingTime;
 
     const rewards = [];
 

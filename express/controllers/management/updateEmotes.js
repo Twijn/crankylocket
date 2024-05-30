@@ -3,6 +3,7 @@ const router = express.Router();
 
 const fetcher = require("../../../twitch/emotes");
 const {TwitchEmote} = require("../../../schemas");
+const utils = require("../../../utils");
 
 router.post("/", async (req, res) => {
     const data = req?.body;
@@ -64,15 +65,14 @@ router.post("/requirements", async (req, res) => {
         return res.redirect("/?error=At+least+one+variable+is+not+a+number!");
     }
 
-    await TwitchEmote.updateMany({
-        requirements: {
-            emoteCount,
-            emoteTime,
-            maxPerUser,
-            lastingTime,
-        },
-    });
+    const settings = await utils.settings.get();
 
+    settings.emoteRequirements = {
+        emoteCount, emoteTime, maxPerUser, lastingTime,
+    };
+
+    await utils.settings.save();
+    
     res.redirect("/?info=Requirements+updated!");
 });
 

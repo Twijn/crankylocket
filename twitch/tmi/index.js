@@ -5,18 +5,12 @@ const { TwitchToken, TwitchEmote } = require("../../schemas");
 const { broadcast } = require("../../express/ws");
 
 const fetcher = require("../emotes");
+const utils = require("../../utils");
 
 let listener;
 
-let defaultRequirements = {
-    emoteCount: 3,
-    emoteTime: 10,
-    maxPerUser: Infinity,
-    lastingTime: 10,
-};
-
 /**
- * @type {{requirements:{emoteCount:number,emoteTime:number,maxPerUser:number,lastingTime:number},emote:Emote,count:number,until:Date}?}
+ * @type {{emote:Emote,count:number,until:Date}?}
  */
 let currentReaction = null;
 
@@ -29,33 +23,6 @@ let dbEmotes = [];
 
 const updateDatabaseEmotes = async () => {
     dbEmotes = await TwitchEmote.find({});
-
-    let emoteCount = 0;
-    let emoteTime = 0;
-    let maxPerUser = 0;
-    let lastingTime = 0;
-
-    dbEmotes.forEach(emote => {
-        emoteCount += emote.requirements.emoteCount;
-        emoteTime += emote.requirements.emoteTime;
-        maxPerUser += emote.requirements.maxPerUser;
-        lastingTime += emote.requirements.lastingTime;
-    });
-
-    emoteCount /= dbEmotes.length;
-    emoteTime /= dbEmotes.length;
-    maxPerUser /= dbEmotes.length;
-    lastingTime /= dbEmotes.length;
-
-    if (emoteCount > 0) {
-        defaultRequirements = {
-            emoteCount,
-            emoteTime,
-            maxPerUser,
-            lastingTime,
-        };
-        global.defaultRequirements = defaultRequirements;
-    }
 }
 
 setInterval(updateDatabaseEmotes, 30000);
@@ -65,13 +32,19 @@ updateDatabaseEmotes().catch(console.error);
  * 
  * @param {Emote} emote 
  * @param {number} currentCount
+ * @param {"wisp"|"emote"} reactionSetting
  */
-const announceEmote = (emote, currentCount) => {
+const announceEmote = (emote, currentCount, reactionSetting = "emote") => {
     let dbEmote = dbEmotes.find(x => x._id === emote.id);
     let displayName = emote.code;
+    
     if (dbEmote) {
         displayName = dbEmote.displayName;
         if (!dbEmote.enabled) return;
+    }
+
+    if (reactionSetting === "wisp") {
+        displayName = "wisp";
     }
     
     broadcast({
@@ -109,21 +82,22 @@ const calculateCount = (emoteId, emoteRequirements) => {
 /**
  * 
  * @param {Emote} emote 
- * @param {{emoteCount:number,emoteTime:number,maxPerUser:number,lastingTime:number}} emoteRequirements 
  * @param {string} user 
  */
-const logEmote = (emote, emoteRequirements, user) => {
+const logEmote = async (emote, user) => {
     emoteCounts.push({
         emote: emote.id,
         user,
         time: Date.now(),
     });
 
+    const { emoteRequirements, reactionSetting } = await utils.settings.get();
+
     if (currentReaction) {
         if (currentReaction.until > Date.now()) {
             if (currentReaction.emote.id === emote.id) {
-                announceEmote(emote, ++currentReaction.count);
-                currentReaction.until = Date.now() + (currentReaction.requirements.lastingTime * 1000);
+                announceEmote(emote, ++currentReaction.count, reactionSetting);
+                currentReaction.until = Date.now() + (emoteRequirements.lastingTime * 1000);
             }
             return;
         } else {
@@ -140,13 +114,21 @@ const logEmote = (emote, emoteRequirements, user) => {
             until: Date.now() + (emoteRequirements.lastingTime * 1000),
             count: currentCount,
         }
-        announceEmote(emote, currentCount);
+        announceEmote(emote, currentCount, reactionSetting);
     }
 }
 
-setInterval(() => {
+let cachedEmoteTime = null;
+let i = 0;
+setInterval(async () => {
     const currentTime = Date.now();
-    emoteCounts = emoteCounts.filter(x => currentTime - x.time < defaultRequirements.emoteTime * 1000);
+
+    if (!cachedEmoteTime || i % 100 === 0) {
+        cachedEmoteTime = (await utils.settings.get()).emoteRequirements.emoteTime;
+    }
+
+    emoteCounts = emoteCounts.filter(x => currentTime - x.time < cachedEmoteTime * 1000);
+    i++;
 }, 100);
 
 /**
@@ -190,9 +172,7 @@ module.exports = async function(authProvider) {
             }
 
             if (emote) {
-                const dbEmote = dbEmotes.find(x => x._id === emote.id);
-
-                logEmote(emote, dbEmote ? dbEmote.requirements : defaultRequirements, msg.userInfo.userId);
+                logEmote(emote, msg.userInfo.userId).catch(console.error);
             }
         }
     });
