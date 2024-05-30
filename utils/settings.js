@@ -4,7 +4,7 @@ let settings = null;
 
 /**
  * 
- * @returns {Promise<{wheelCss:string,reactionCss:string,reactionSetting:string,emoteRequirements:{emoteCount:number,emoteTime:number,maxPerUser:number,lastingTime:number}}>}
+ * @returns {Promise<{wheelCss:string,reactionCss:string,reactionSetting:"wisp"|"emote",wheelSetting:"block"|"remove"|"ignore",emoteRequirements:{emoteCount:number,emoteTime:number,maxPerUser:number,lastingTime:number}}>}
  */
 const get = async () => {
     if (settings) {
