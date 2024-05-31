@@ -22,12 +22,14 @@ router.get("/", (req, res) => {
                     tokenData,
                     'settings.authorized': true,
                     'settings.useAsBot': true,
+                    'settings.useAsChannel': true,
                 }, {
                     upsert: true,
                     new: true,
                 })
 
                 global.activeUsers = [user];
+                global.authSetup = true;
     
                 require("../twitch")(api, authProvider);
             } else {
@@ -49,11 +51,6 @@ router.get("/", (req, res) => {
             const sessionId = generateRandomString(64);
             req.sessions.push(sessionId);
             res.cookie("session", sessionId);
-            // if (req?.cookies?.redirect_uri && req.cookies.redirect_uri.length > 0) {
-            //     res.redirect(req.cookies.redirect_uri);
-            // } else {
-            //     res.redirect("/");
-            // }
             res.redirect("/");
         }, err => {
             res.redirect(TWITCH_URI);
