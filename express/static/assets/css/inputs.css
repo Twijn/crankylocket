@@ -14,8 +14,7 @@ select {
     border-radius: 3px;
 }
 
-select {
-    width: 100%;
+select.noblock {
     display: inline-block;
     width: auto;
 }
