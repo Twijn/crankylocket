@@ -85,12 +85,6 @@ const calculateCount = (emoteId, emoteRequirements) => {
  * @param {string} user 
  */
 const logEmote = async (emote, user) => {
-    emoteCounts.push({
-        emote: emote.id,
-        user,
-        time: Date.now(),
-    });
-
     const { emoteRequirements, reactionSetting } = await utils.settings.get();
 
     if (currentReaction) {
@@ -105,6 +99,12 @@ const logEmote = async (emote, user) => {
             emoteCounts = [];
         }
     }
+
+    emoteCounts.push({
+        emote: emote.id,
+        user,
+        time: Date.now(),
+    });
 
     let currentCount = calculateCount(emote.id, emoteRequirements);
     if (currentCount >= emoteRequirements.emoteCount) {
@@ -156,6 +156,7 @@ module.exports = async function(authProvider) {
         for (let i = 0; i < words.length; i++) {
             const word = words[i];
 
+            // prevent multiple of the same emote from triggering multiple emotes
             if (recognizedWords.includes(word.toLowerCase())) continue;
             recognizedWords.push(word.toLowerCase());
 
