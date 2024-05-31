@@ -19,6 +19,8 @@ const MAX_DEG = 32 * 360; // 32 spins
 module.exports = function(apiClient) {
 
     const roleHandler = async redemption => {
+        const settings = await utils.settings.get();
+
         const cancelRedemption = message => {
             redemption.updateStatus("CANCELED").catch(console.error);
             apiClient.asIntent(["chat"], ctx => {
@@ -59,8 +61,17 @@ module.exports = function(apiClient) {
 
         const existingRoles = user.roles.cache.filter(x => roles.find(y => y._id === x.id));
 
-        if (existingRoles.size > 0) {
-            return cancelRedemption(`Unable to spin the wheel as you already have the ${existingRoles.map(x => x.name).join(", ")} role!`);
+        if (settings.wheelSetting === "block") {
+            if (existingRoles.size > 0) {
+                return cancelRedemption(`Unable to spin the wheel as you already have the ${existingRoles.map(x => x.name).join(", ")} role!`);
+            }
+        } else if (settings.wheelSetting === "remove") {
+            try {
+                await user.roles.remove(existingRoles);
+            } catch(err) {
+                console.error(err);
+                return cancelRedemption("Unable to remove existing roles!");
+            }
         }
         
         let deg = 0;
