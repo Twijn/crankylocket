@@ -5,13 +5,11 @@ const utils = require("../../../utils");
 
 router.post("/", async (req, res) => {
     const settings = await utils.settings.get();
-    if (!req?.body?.wheelPosition) {
-        return res.redirect("/?error=Missing+parameter");
-    }
-    if (!req?.body?.reactionPosition) {
-        return res.redirect("/?error=Missing+parameter");
-    }
-    if (!req?.body?.reactionSetting) {
+    if (!req?.body?.wheelPosition ||
+        !req?.body?.reactionPosition ||
+        !req?.body?.reactionSetting ||
+        !req?.body?.wheelSetting
+    ) {
         return res.redirect("/?error=Missing+parameter");
     }
 
@@ -36,6 +34,7 @@ router.post("/", async (req, res) => {
     }
 
     settings.reactionSetting = req.body.reactionSetting;
+    settings.wheelSetting = req.body.wheelSetting;
 
     await settings.save();
 
