@@ -110,16 +110,19 @@
             <form method="POST" action="/settings" class="section">
                 <h2>Settings</h2>
                 <div class="container">
-                    <div class="col col-4">
+                    <div class="col col-3">
                         <label for="wheelPosition">Wheel Position</label>
                     </div>
-                    <div class="col col-4">
+                    <div class="col col-3">
                         <label for="reactionPosition">Live Reaction Position</label>
                     </div>
-                    <div class="col col-4">
+                    <div class="col col-3">
                         <label for="reactionSetting">Reaction Setting</label>
                     </div>
-                    <div class="col col-4">
+                    <div class="col col-3">
+                        <label for="wheelSetting">Wheel Setting</label>
+                    </div>
+                    <div class="col col-3">
                         <select name="wheelPosition" id="wheelPosition">
                             <option value="4"<%- settings.wheelCss === "left:2em;top:2em;" ? ' selected="selected"' : "" %>>Top Left</option>
                             <option value="1"<%- settings.wheelCss === "right:2em;top:2em;" ? ' selected="selected"' : "" %>>Top Right</option>
@@ -127,7 +130,7 @@
                             <option value="3"<%- settings.wheelCss === "left:2em;bottom:2em;" ? ' selected="selected"' : "" %>>Bottom Left</option>
                         </select>
                     </div>
-                    <div class="col col-4">
+                    <div class="col col-3">
                         <select name="reactionPosition" id="reactionPosition">
                             <option value="4"<%- settings.reactionCss === "left:2em;top:2em;" ? ' selected="selected"' : "" %>>Top Left</option>
                             <option value="1"<%- settings.reactionCss === "right:2em;top:2em;" ? ' selected="selected"' : "" %>>Top Right</option>
@@ -135,10 +138,17 @@
                             <option value="3"<%- settings.reactionCss === "left:2em;bottom:2em;" ? ' selected="selected"' : "" %>>Bottom Left</option>
                         </select>
                     </div>
-                    <div class="col col-4">
+                    <div class="col col-3">
                         <select name="reactionSetting" id="reactionSetting">
                             <option value="wisp"<%- settings.reactionSetting === "wisp" ? ' selected="selected"' : "" %>>Live Wisp Reaction</option>
                             <option value="emote"<%- settings.reactionSetting === "emote" ? ' selected="selected"' : "" %>>Live (Emote) Reaction</option>
+                        </select>
+                    </div>
+                    <div class="col col-3">
+                        <select name="wheelSetting" id="wheelSetting">
+                            <option value="block"<%- settings.wheelSetting === "block" ? ' selected="selected"' : "" %>>Block - Prevent user from spinning the wheel if they already have a role</option>
+                            <option value="remove"<%- settings.wheelSetting === "remove" ? ' selected="selected"' : "" %>>Remove - Remove any existing roles if a user re-spins the wheel</option>
+                            <option value="ignore"<%- settings.wheelSetting === "ignore" ? ' selected="selected"' : "" %>>Ignore - Ignore any roles the user may have and add another one</option>
                         </select>
                     </div>
                 </div>
@@ -150,7 +160,7 @@
                 <h2>Manage Emotes</h2>
                 <form method="POST" action="/emotes/new">
                     Add new Emote
-                    <select name="emote" id="emote">
+                    <select name="emote" id="emote" class="noblock">
                         <% let lastType = ""; allEmotes.forEach(emote => { %><% if (emote.type !== lastType) { %><option value="null" disabled="disabled"><%= emote.type.toUpperCase() %></option><% lastType = emote.type; } %><option value="<%= emote.code %>"><%= emote.code %></option><% }) %>
                     </select>
                     <input type="submit" value="Add Emote">
