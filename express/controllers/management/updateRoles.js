@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
         }
         await roles[i].save();
     }
-    res.redirect("/?info=Role+settings+updated!");
+    res.redirect("/?info=Role+settings+updated!+Please+make+sure+you+refresh+the+overlay!");
 });
 
 module.exports = router;

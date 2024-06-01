@@ -36,7 +36,11 @@ router.post("/", async (req, res) => {
     for (let i = 0; i < tokens.length; i++) {
         await tokens[i].save();
     }
-    res.redirect("/?info=If+the+bot+user+or+channel+properties+were+changed+the+program+must+be+restarted!");
+    res.redirect("/?restart&info=" + encodeURIComponent("Success! The server will be stopped to take the changes into account, and this page will refresh in a couple seconds."));
+    setTimeout(() => {
+        console.log("Stopping server as channel options were changed!");
+        process.exit(1);
+    }, 500);
 });
 
 module.exports = router;

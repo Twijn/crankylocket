@@ -14,7 +14,13 @@
 <body>
     <%- include("../partials/header") %>
     <main class="container container-lg">
-        <% if (locals.error) { %>
+        <% if (restart) { %>
+            <script>
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 3000);
+            </script>
+        <% }  if (locals.error) { %>
         <div class="alert alert-danger alert-fixed">
             <strong>Error:</strong>
             <%= error %>

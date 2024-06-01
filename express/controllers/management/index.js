@@ -67,7 +67,7 @@ router.get("/", async (req, res) => {
         emotes, allEmotes,
         emoteCount, emoteTime, maxPerUser, lastingTime,
         settings,
-        error, info,
+        error, info, restart: req.query.restart === "",
     });
 });
 

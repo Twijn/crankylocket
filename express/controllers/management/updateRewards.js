@@ -24,7 +24,11 @@ router.get("/add", async (req, res) => {
                     roleAdd: true,
                 },
             }).then(dbReward => {
-                res.redirect("/?info=Bot+reward+added!+Please+restart+the+server.");
+                res.redirect("/?restart&info=" + encodeURIComponent("Success! The server will be stopped to take the changes into account, and this page will refresh in a couple seconds."));
+                setTimeout(() => {
+                    console.log("Stopping server as reward options were changed!");
+                    process.exit(1);
+                }, 500);
             }, err => {
                 console.error(err);
                 res.redirect("/?error=Please+restart+the+server!");
@@ -46,7 +50,11 @@ router.post("/", async (req, res) => {
         rewards[i].settings.roleAdd = body.roleAdd.hasOwnProperty(rewards[i]._id);
         await rewards[i].save();
     }
-    res.redirect("/?info=Reward+settings+updated!");
+    res.redirect("/?restart&info=" + encodeURIComponent("Success! The server will be stopped to take the changes into account, and this page will refresh in a couple seconds."));
+    setTimeout(() => {
+        console.log("Stopping server as reward options were changed!");
+        process.exit(1);
+    }, 500);
 });
 
 module.exports = router;
