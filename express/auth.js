@@ -50,7 +50,7 @@ router.get("/", (req, res) => {
 
             const sessionId = generateRandomString(64);
             req.sessions.push(sessionId);
-            res.cookie("session", sessionId);
+            res.cookie("session", sessionId, {domain: process.env.EXPRESS_COOKIE_DOMAIN});
             res.redirect("/");
         }, err => {
             res.redirect(TWITCH_URI);
