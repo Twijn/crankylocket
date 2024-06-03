@@ -9,8 +9,8 @@ router.use("/overlay", overlay);
 router.use("/json", json);
 
 router.use((req, res, next) => {
-    if (req?.cookies?.session) {
-        if (req.sessions.includes(req.cookies.session)) {
+    if (req?.cookies?.m_session) {
+        if (req.sessions.includes(req.cookies.m_session)) {
             return next();
         }
     }
