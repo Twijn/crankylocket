@@ -81,6 +81,53 @@ function spinWheel(endDeg, cb) {
     }, 5);
 }
 
+let wheelQueue = [];
+let wheelSpinning = false;
+
+function spinNextWheel() {
+    const data = wheelQueue.shift();
+
+    if (!data) return;
+
+    wheelSpinning = true;
+
+    $("#role-wheel").addClass("out");
+    $("#role-wheel").show();
+    $("#wheel").css("transform","rotate(0deg)");
+    $("#role-wheel .username").text(data.user.displayName);
+    setTimeout(() => {
+        $("#role-wheel").removeClass("out");
+    }, 10);
+    setTimeout(() => {
+        spinWheel(data.endDeg, () => {
+            $("#role-wheel").addClass("out");
+            $("#role-selected").addClass("out");
+            $("#role-selected").show();
+            $("#role-selected .user-image").attr("src", data.user.avatar);
+            $("#role-selected .user-name").text(data.user.displayName);
+            $("#role-selected .role").text(data.role.name);
+            $("#role-selected .role").css("background-color", data.role.backgroundColor);
+            $("#role-selected .role").css("color", data.role.textColor);
+            setTimeout(() => {
+                $("#role-selected").removeClass("out");
+            }, 10);
+            setTimeout(() => {
+                $("#role-selected").addClass("out");
+                setTimeout(() => {
+                    $("#role-wheel").hide();
+                    $("#role-selected").hide();
+
+                    wheelSpinning = false;
+
+                    if (wheelQueue.length > 0) {
+                        spinNextWheel();
+                    }
+                }, 250);
+            }, 5500);
+        });
+    }, 1500);
+}
+
 function initWebsocket() {
     websocket = new WebSocket(WS_URI);
 
@@ -119,35 +166,12 @@ function initWebsocket() {
                     }, 250);
                 }, 3500);
             } else if (data.type === "role-wheel") {
-                $("#role-wheel").addClass("out");
-                $("#role-wheel").show();
-                $("#wheel").css("transform","rotate(0deg)");
-                $("#role-wheel .username").text(data.user.displayName);
-                setTimeout(() => {
-                    $("#role-wheel").removeClass("out");
-                }, 10);
-                setTimeout(() => {
-                    spinWheel(data.endDeg, () => {
-                        $("#role-wheel").addClass("out");
-                        $("#role-selected").addClass("out");
-                        $("#role-selected").show();
-                        $("#role-selected .user-image").attr("src", data.user.avatar);
-                        $("#role-selected .user-name").text(data.user.displayName);
-                        $("#role-selected .role").text(data.role.name);
-                        $("#role-selected .role").css("background-color", data.role.backgroundColor);
-                        $("#role-selected .role").css("color", data.role.textColor);
-                        setTimeout(() => {
-                            $("#role-selected").removeClass("out");
-                        }, 10);
-                        setTimeout(() => {
-                            $("#role-selected").addClass("out");
-                            setTimeout(() => {
-                                $("#role-wheel").hide();
-                                $("#role-selected").hide();
-                            }, 250);
-                        }, 5500);
-                    });
-                }, 1500);
+                wheelQueue.push(data);
+
+                // if there's only the current wheel spin in queue and the wheel is NOT spinning, start it immediately
+                if (wheelQueue.length === 1 && !wheelSpinning) {
+                    spinNextWheel();
+                }
             }
         } catch(err) {
             console.error(err);
