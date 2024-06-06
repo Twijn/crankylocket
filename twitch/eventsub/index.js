@@ -103,7 +103,7 @@ module.exports = function(apiClient) {
                     avatar: user.displayAvatarURL({size: 128}),
                 },
             });
-            redemption.updateStatus("FULFILLED").catch(console.error);
+            // redemption.updateStatus("FULFILLED").catch(console.error);
 
             setTimeout(() => {
                 apiClient.asIntent(["chat"], ctx => {
