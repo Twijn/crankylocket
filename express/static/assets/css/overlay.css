@@ -143,6 +143,7 @@ body {
 
 #role-selected .user-name {
     font-size: 1.6em;
+    text-wrap: nowrap;
 }
 
 #role-selected .user-image {
