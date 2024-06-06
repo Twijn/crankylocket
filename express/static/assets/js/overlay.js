@@ -39,7 +39,7 @@ function drawText(deg, text, color) {
     ctx.rotate(deg2rad(deg));
     ctx.fillStyle = color;
     ctx.font = "20px Arial";
-    ctx.fillText(text, 15, 10, center - 20);
+    ctx.fillText(text, 25, 10, center - 20);
     ctx.restore();
 }
 
