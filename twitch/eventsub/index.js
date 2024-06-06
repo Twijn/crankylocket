@@ -104,6 +104,12 @@ module.exports = function(apiClient) {
                 },
             });
             redemption.updateStatus("FULFILLED").catch(console.error);
+
+            setTimeout(() => {
+                apiClient.asIntent(["chat"], ctx => {
+                    ctx.chat.sendChatMessage(`${user.displayName} was placed in ${chosenRole.name}! meiyaYay`);
+                });
+            }, 12500);
         }, err => {
             console.error(err);
             cancelRedemption("Unable to add the role to you!");
