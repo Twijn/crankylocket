@@ -107,7 +107,7 @@ module.exports = function(apiClient) {
 
             setTimeout(() => {
                 apiClient.asIntent(["chat"], ctx => {
-                    ctx.chat.sendChatMessage(`${user.displayName} was placed in ${chosenRole.name}! meiyaYay`);
+                    ctx.chat.sendChatMessage(redemption.broadcasterId, `${user.displayName} was placed in ${chosenRole.name}! meiyaYay`).catch(console.error);
                 });
             }, 12500);
         }, err => {
