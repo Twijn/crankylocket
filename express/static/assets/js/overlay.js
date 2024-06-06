@@ -161,9 +161,6 @@ function initWebsocket() {
                 hideTimeout = setTimeout(() => {
                     hideTimeout = null;
                     $("#live-reaction").addClass("out");
-                    setTimeout(() => {
-                        $("#live-reaction").hide();
-                    }, 250);
                 }, 3500);
             } else if (data.type === "role-wheel") {
                 wheelQueue.push(data);
