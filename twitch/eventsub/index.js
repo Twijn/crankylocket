@@ -38,7 +38,7 @@ module.exports = function(apiClient) {
             guild = discordClient.guilds.cache.first();
             await guild.members.fetch();
             user = guild.members.cache.find(x => 
-                x.displayName.toLowerCase() === redemption.input.trim().toLowerCase() ||
+                x.user.username.toLowerCase() === redemption.input.trim().toLowerCase() ||
                 x.id === redemption.input.trim()
             )
 
