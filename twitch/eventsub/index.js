@@ -12,6 +12,8 @@ let listener;
 const MIN_DEG = 25 * 360; // 25 spins
 const MAX_DEG = 32 * 360; // 32 spins
 
+const send
+
 /**
  * Initializes Twitch
  * @param {ApiClient} apiClient 
@@ -50,6 +52,7 @@ module.exports = function(apiClient) {
         }
 
         if (!user) {
+            console.log(`Failed to find user ${redemption.input.trim()} for role spin`)
             return cancelRedemption(`Unable to find user '${redemption.input.trim()}'! Try using your discord ID, and make sure you are a member of ${guild?.name ? guild.name + " on Discord" : "Discord"}.`);
         }
 
@@ -63,6 +66,7 @@ module.exports = function(apiClient) {
 
         if (settings.wheelSetting === "block") {
             if (existingRoles.size > 0) {
+                console.log(`Failed to add additional role to ${user.user.username}`);
                 return cancelRedemption(`Unable to spin the wheel as you already have the ${existingRoles.map(x => x.name).join(", ")} role!`);
             }
         } else if (settings.wheelSetting === "remove") {
@@ -89,7 +93,8 @@ module.exports = function(apiClient) {
         }
 
         user.roles.add(chosenRole._id).then(() => {
-            broadcast({
+            const numberOfWebsockets = broadcast({
+                id: redemption.id,
                 type: "role-wheel",
                 endDeg,
                 role: {
@@ -99,17 +104,17 @@ module.exports = function(apiClient) {
                 },
                 user: {
                     id: user.id,
-                    displayName: user.displayName,
+                    displayName: user.user.username,
                     avatar: user.displayAvatarURL({size: 128}),
                 },
             });
             // redemption.updateStatus("FULFILLED").catch(console.error);
 
-            setTimeout(() => {
+            if (numberOfWebsockets === 0) {
                 apiClient.asIntent(["chat"], ctx => {
                     ctx.chat.sendChatMessage(redemption.broadcasterId, `${user.displayName} was placed in ${chosenRole.name}! meiyaYay`).catch(console.error);
                 });
-            }, 12500);
+            }
         }, err => {
             console.error(err);
             cancelRedemption("Unable to add the role to you!");
