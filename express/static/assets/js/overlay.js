@@ -1,6 +1,6 @@
 $(function() {
 
-const WS_URI = "/ws";
+const WS_URI = "wss://meiya.tms.to/ws";
 
 let websocket;
 
