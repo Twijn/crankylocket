@@ -33,6 +33,8 @@ eventHandler.onRoleWheelCompleted(data => {
 
     console.log("Sending completed role spin message for " + redemption.userName);
     sendCompletedSpinMessage(redemption.broadcasterId, redemption.userName, redemption.roleName);
+
+    incompleteRedemptions = incompleteRedemptions.filter(x => x.id !== data.id);
 });
 
 /**
