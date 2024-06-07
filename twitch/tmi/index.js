@@ -49,7 +49,7 @@ const announceEmote = (emote, currentCount, reactionSetting = "emote") => {
         displayName = "wisp";
     }
 
-    if (currentCount === 250 || currentCount % 250 === 0) {
+    if (currentCount === 100 || currentCount % 250 === 0) {
         wispStreak(currentReaction.broadcasterId, emote.code, currentCount);
     }
     
