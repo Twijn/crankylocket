@@ -7,6 +7,8 @@ const discordClient = require("../../discord");
 
 const {broadcast, eventHandler} = require("../../express/ws");
 
+const roleWheelImageURI = "/assets/images/rolewheel/";
+
 let listener;
 
 const MIN_DEG = 25 * 360; // 25 spins
@@ -137,7 +139,7 @@ module.exports = function(apiClient) {
                 user: {
                     id: user.id,
                     displayName: user.user.username,
-                    avatar: user.displayAvatarURL({size: 128}),
+                    avatar: roleWheelImageURI + utils.generateRandomNumber(1, 10, true) + ".png",
                 },
             });
             // redemption.updateStatus("FULFILLED").catch(console.error);

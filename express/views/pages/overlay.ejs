@@ -12,6 +12,9 @@
     <script src="/assets/js/overlay.js"></script>
 <% urls.forEach(url => { %>
     <link rel="prefetch" href="<%= url %>"><% }) %>
+    
+<% for (let i = 1; i <= 10; i++) { %>
+    <link rel="prefetch" href="/assets/images/rolewheel/<%= i %>.png"><% } %>
 
     <title>Overlay</title>
 </head>
