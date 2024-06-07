@@ -8,6 +8,8 @@ const TwitchEmote = require("./TwitchEmote");
 const TwitchReward = require("./TwitchReward");
 const TwitchToken = require("./TwitchToken");
 
+const WispReaction = require("./WispReaction");
+
 const schemas = {
     Setting,
     
@@ -16,6 +18,8 @@ const schemas = {
     TwitchEmote,
     TwitchReward,
     TwitchToken,
+
+    WispReaction,
 }
 
 mongoose.connect(process.env.MDB_URL).then(() => {

@@ -6,11 +6,14 @@ const { broadcast } = require("../../express/ws");
 
 const fetcher = require("../emotes");
 const utils = require("../../utils");
+const {api} = require("../api");
+
+const {WispReaction} = require("../../schemas");
 
 let listener;
 
 /**
- * @type {{emote:Emote,count:number,until:Date}?}
+ * @type {{emote:Emote,broadcasterId:string,count:number,until:Date,startTime:number}?}
  */
 let currentReaction = null;
 
@@ -29,7 +32,6 @@ setInterval(updateDatabaseEmotes, 30000);
 updateDatabaseEmotes().catch(console.error);
 
 /**
- * 
  * @param {Emote} emote 
  * @param {number} currentCount
  * @param {"wisp"|"emote"} reactionSetting
@@ -45,6 +47,10 @@ const announceEmote = (emote, currentCount, reactionSetting = "emote") => {
 
     if (reactionSetting === "wisp") {
         displayName = "wisp";
+    }
+
+    if (currentCount === 250 || currentCount % 250 === 0) {
+        wispStreak(currentReaction.broadcasterId, emote.code, currentCount);
     }
     
     broadcast({
@@ -80,11 +86,64 @@ const calculateCount = (emoteId, emoteRequirements) => {
 }
 
 /**
+     * Converts a number into a string with commas
+     * Example: 130456 -> 130,456
+     * @param {number} num 
+     * @returns {string}
+     */
+const comma = (num) => {
+    if (!num) return "0";
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+/**
  * 
+ * @param {string} broadcasterId 
+ * @param {string} code
+ * @param {number} count 
+ */
+const wispStreak = async (broadcasterId, code, count) => {
+    code = code + " ";
+    api.asIntent(["chat"], ctx => {
+        ctx.chat.sendChatMessage(broadcasterId, `${code.repeat(3)} reached wisp reaction milestone of ${comma(count)}!! ${code.repeat(3)}`.trim());
+    });
+}
+
+/**
+ * 
+ * @param {string} broadcasterId 
+ */
+const stopReaction = async broadcasterId => {
+    if (!currentReaction) return;
+
+    const topWispReactions = await WispReaction
+        .find({})
+        .sort({reactions: -1})
+        .limit(1);
+
+    if (topWispReactions.length === 0 || currentReaction.count > topWispReactions[0].reactions) {
+        api.asIntent(["chat"], ctx => {
+            ctx.chat.sendChatMessage(broadcasterId, `${`${currentReaction.emote.code} `.repeat(4)}new wisp reaction record of ${comma(currentReaction.count)}${topWispReactions.length === 0 ? "!" : `, beating the previous of ${comma(topWispReactions[0].reactions)}!`} ${`${currentReaction.emote.code} `.repeat(4)}`.trim());
+        });
+    }
+
+    await WispReaction.create({
+        emoteId: currentReaction.emote.id,
+        emoteCode: currentReaction.emote.code,
+        reactions: currentReaction.count,
+        startTime: currentReaction.startTime,
+    });
+
+    currentReaction = null;
+    emoteCounts = [];
+}
+
+/**
+ * @param {string} broadcasterId
  * @param {Emote} emote 
  * @param {string} user 
  */
-const logEmote = async (emote, user) => {
+const logEmote = async (broadcasterId, emote, user) => {
     const { emoteRequirements, reactionSetting } = await utils.settings.get();
 
     if (currentReaction) {
@@ -95,8 +154,11 @@ const logEmote = async (emote, user) => {
             }
             return;
         } else {
-            currentReaction = null;
-            emoteCounts = [];
+            try {
+                await stopReaction(broadcasterId);
+            } catch(err) {
+                console.error(err);
+            }
         }
     }
 
@@ -109,11 +171,13 @@ const logEmote = async (emote, user) => {
     let currentCount = calculateCount(emote.id, emoteRequirements);
     if (currentCount >= emoteRequirements.emoteCount) {
         currentReaction = {
+            broadcasterId,
             emote,
             requirements: emoteRequirements,
             until: Date.now() + (emoteRequirements.lastingTime * 1000),
             count: currentCount,
-        }
+            startTime: Date.now(),
+        };
         announceEmote(emote, currentCount, reactionSetting);
     }
 }
@@ -129,6 +193,12 @@ setInterval(async () => {
 
     emoteCounts = emoteCounts.filter(x => currentTime - x.time < cachedEmoteTime * 1000);
     i++;
+
+    if (i % 10 === 0 && currentReaction) {
+        if (Date.now() >= currentReaction.until) {
+            stopReaction(currentReaction.broadcasterId).catch(console.error);
+        }
+    }
 }, 100);
 
 /**
@@ -173,7 +243,7 @@ module.exports = async function(authProvider) {
             }
 
             if (emote) {
-                logEmote(emote, msg.userInfo.userId).catch(console.error);
+                logEmote(msg.channelId, emote, msg.userInfo.userId).catch(console.error);
             }
         }
     });
