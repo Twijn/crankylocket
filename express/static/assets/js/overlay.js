@@ -1,6 +1,6 @@
 $(function() {
 
-const WS_URI = "wss://meiya.tms.to/ws";
+const WS_URI = "/ws";
 
 let websocket;
 
@@ -118,6 +118,11 @@ function spinNextWheel() {
                     $("#role-selected").hide();
 
                     wheelSpinning = false;
+
+                    websocket.send(JSON.stringify({
+                        type: "role-wheel-completed",
+                        id: data.id,
+                    }));
 
                     if (wheelQueue.length > 0) {
                         spinNextWheel();

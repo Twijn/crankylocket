@@ -5,20 +5,52 @@ const {DiscordRole, TwitchReward} = require("../../schemas");
 const utils = require("../../utils");
 const discordClient = require("../../discord");
 
-const {broadcast} = require("../../express/ws");
+const {broadcast, eventHandler} = require("../../express/ws");
 
 let listener;
 
 const MIN_DEG = 25 * 360; // 25 spins
 const MAX_DEG = 32 * 360; // 32 spins
 
-const send
+/**
+ * @type {ApiClient}
+ */
+let client = null;
+
+/**
+ * @type {{id: string, broadcasterId: string, userName: string, roleName: string}[]}
+ */
+let incompleteRedemptions = [];
+
+eventHandler.onRoleWheelCompleted(data => {
+    const redemption = incompleteRedemptions.find(x => x.id === data.id);
+    
+    if (!redemption) {
+        return console.error("Failed to find redemption " + data.id);
+    }
+
+    console.log("Sending completed role spin message for " + redemption.userName);
+    sendCompletedSpinMessage(redemption.broadcasterId, redemption.userName, redemption.roleName);
+});
+
+/**
+ * Sends the completed spin message to Twitch chat
+ * @param {string} broadcasterId 
+ * @param {string} userName 
+ * @param {string} roleName 
+ */
+const sendCompletedSpinMessage = (broadcasterId, userName, roleName) => {
+    client.asIntent(["chat"], ctx => {
+        ctx.chat.sendChatMessage(broadcasterId, `${userName} was placed in ${roleName}! meiyaYay`).catch(console.error);
+    });
+}
 
 /**
  * Initializes Twitch
  * @param {ApiClient} apiClient 
  */
 module.exports = function(apiClient) {
+    client = apiClient;
 
     const roleHandler = async redemption => {
         const settings = await utils.settings.get();
@@ -110,9 +142,17 @@ module.exports = function(apiClient) {
             });
             // redemption.updateStatus("FULFILLED").catch(console.error);
 
+            console.log(`${user.user.username} successfully spun the wheel for ${chosenRole.name}!`);
+
             if (numberOfWebsockets === 0) {
-                apiClient.asIntent(["chat"], ctx => {
-                    ctx.chat.sendChatMessage(redemption.broadcasterId, `${user.displayName} was placed in ${chosenRole.name}! meiyaYay`).catch(console.error);
+                console.log("Sending confirmation message immediately as no websockets are connected!");
+                sendCompletedSpinMessage(redemption.broadcasterId, user.user.username, chosenRole.name);
+            } else {
+                incompleteRedemptions.push({
+                    id: redemption.id,
+                    broadcasterId: redemption.broadcasterId,
+                    userName: user.user.username,
+                    roleName: chosenRole.name,
                 });
             }
         }, err => {
