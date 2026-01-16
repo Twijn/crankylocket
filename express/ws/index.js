@@ -1,5 +1,4 @@
 const express = require("express");
-const router = express.Router();
 
 const {WebSocketEventHandler} = require("../../utils/index");
 const eventHandler = new WebSocketEventHandler();
@@ -15,7 +14,11 @@ const stats = {
     startTime: new Date(),
 };
 
-router.ws("/", (ws, req) => {
+const createRouter = (expressWs) => {
+    const router = express.Router();
+    expressWs.applyTo(router);
+
+    router.ws("/", (ws, req) => {
     ws.id = nextWebsocketId++;
     stats.totalConnections++;
 
@@ -48,6 +51,9 @@ router.ws("/", (ws, req) => {
     })
 });
 
+    return router;
+};
+
 /**
  * Broadcasts a message to all connected websockets
  * @param {string|object} message The message to send
@@ -77,7 +83,7 @@ const getStats = () => ({
 });
 
 module.exports = {
-    router,
+    createRouter,
     broadcast,
     eventHandler,
     getStats,

@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 })
 
 app.use("/auth", auth);
-app.use("/ws", ws.router);
+app.use("/ws", ws.createRouter(expressWs));
 
 app.use("/", controllers);
 
