@@ -254,6 +254,27 @@ tr.unassignable td {
     margin-bottom: var(--space-md);
 }
 
+.stats-cards--4col {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+@media screen and (max-width: 900px) {
+    .stats-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .stats-cards--4col {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .stats-cards,
+    .stats-cards--4col {
+        grid-template-columns: 1fr;
+    }
+}
+
 .stats-card {
     background: var(--color-surface-alt);
     border-radius: var(--radius-md);

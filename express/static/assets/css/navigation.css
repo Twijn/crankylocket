@@ -156,12 +156,19 @@
    ============================================ */
 .nav-toggle {
     display: none;
-    background: none;
+    background: rgba(255, 255, 255, 0.15);
     border: none;
     padding: var(--space-sm);
+    border-radius: var(--radius-md);
     cursor: pointer;
     z-index: 1001;
     margin: 0;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+.nav-toggle:hover {
+    background: rgba(255, 255, 255, 0.25);
 }
 
 .nav-toggle-icon {
@@ -182,7 +189,15 @@
     transform-origin: center;
 }
 
-/* Hamburger to X animation */
+/* Hamburger to X animation - change color when active (over white bg) */
+.nav-toggle.active {
+    background: var(--color-primary);
+}
+
+.nav-toggle.active .nav-toggle-icon span {
+    background-color: var(--color-text-inverse);
+}
+
 .nav-toggle.active .nav-toggle-icon span:nth-child(1) {
     transform: translateY(8px) rotate(45deg);
 }
@@ -217,8 +232,26 @@
    Mobile Styles
    ============================================ */
 @media screen and (max-width: 900px) {
+    .nav-container {
+        padding: 0 var(--space-md);
+        justify-content: space-between;
+    }
+
+    .nav-brand {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .nav-logo-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
     .nav-toggle {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .nav-menu {
@@ -322,6 +355,26 @@
 
 .main-content .container {
     padding: 0 var(--space-xl);
+}
+
+@media screen and (max-width: 900px) {
+    .main-content {
+        padding: var(--space-md) 0;
+    }
+
+    .main-content .container {
+        padding: 0 var(--space-md);
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .main-content {
+        padding: var(--space-sm) 0;
+    }
+
+    .main-content .container {
+        padding: 0 var(--space-sm);
+    }
 }
 
 /* ============================================

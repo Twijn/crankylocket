@@ -84,22 +84,25 @@ const currentPath = '/';
                                 <div class="stats-card-label">across <%= wispStats.reactionCount.toLocaleString() %> emote triggers</div>
                             </div>
                             <div class="stats-card">
-                                <div class="stats-card-header">Reactions (7 Days)</div>
-                                <div class="stats-card-value"><%= wispStats.recent.last7Days.reactions.toLocaleString() %></div>
-                                <div class="stats-card-label"><%= wispStats.recent.last7Days.triggers %> emote triggers</div>
-                            </div>
-                            <div class="stats-card">
                                 <div class="stats-card-header">Reactions (30 Days)</div>
                                 <div class="stats-card-value"><%= wispStats.recent.last30Days.reactions.toLocaleString() %></div>
                                 <div class="stats-card-label"><%= wispStats.recent.last30Days.triggers %> emote triggers</div>
                             </div>
+                            <div class="stats-card">
+                                <div class="stats-card-header">Reactions (7 Days)</div>
+                                <div class="stats-card-value"><%= wispStats.recent.last7Days.reactions.toLocaleString() %></div>
+                                <div class="stats-card-label"><%= wispStats.recent.last7Days.triggers %> emote triggers</div>
+                            </div>
                         </div>
                         <div class="stats-cards">
-                            <% if (wispStats.highestReaction) { %>
+                            <% if (wispStats.highestReaction) { 
+                                const peakDate = new Date(wispStats.highestReaction.date);
+                                const peakDateStr = peakDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                            %>
                             <div class="stats-card stats-card--highlight">
-                                <div class="stats-card-header">Highest Single Reaction</div>
+                                <div class="stats-card-header">Peak: <%= wispStats.highestReaction.emoteCode %></div>
                                 <div class="stats-card-value"><%= wispStats.highestReaction.reactions.toLocaleString() %></div>
-                                <div class="stats-card-label">from <%= wispStats.highestReaction.emoteCode %></div>
+                                <div class="stats-card-label">reactions on <%= peakDateStr %></div>
                             </div>
                             <% } %>
                             <div class="stats-card">
@@ -150,7 +153,7 @@ const currentPath = '/';
                         <div class="recent-reactions-section">
                             <h4>Recent Triggers</h4>
                             <div class="recent-reactions-list">
-                                <% wispStats.recentReactions.slice(0, 8).forEach(reaction => { 
+                                <% wispStats.recentReactions.slice(0, 12).forEach(reaction => { 
                                     const timeAgo = (() => {
                                         const seconds = Math.floor((new Date() - new Date(reaction.startTime)) / 1000);
                                         if (seconds < 60) return 'just now';
@@ -191,26 +194,26 @@ const currentPath = '/';
                             <% } %>
                         </div>
                         
-                        <div class="stats-cards">
+                        <div class="stats-cards stats-cards--4col">
                             <div class="stats-card">
                                 <div class="stats-card-header">Total Spins (All Time)</div>
                                 <div class="stats-card-value"><%= roleWheelStats.totalRedemptions.toLocaleString() %></div>
-                                <div class="stats-card-label">role wheel redemptions</div>
-                            </div>
-                            <div class="stats-card">
-                                <div class="stats-card-header">Unique Participants</div>
-                                <div class="stats-card-value"><%= roleWheelStats.uniqueUsers.toLocaleString() %></div>
-                                <div class="stats-card-label">users have spun the wheel</div>
-                            </div>
-                            <div class="stats-card">
-                                <div class="stats-card-header">Spins (7 Days)</div>
-                                <div class="stats-card-value"><%= roleWheelStats.recent.last7Days.toLocaleString() %></div>
-                                <div class="stats-card-label">recent redemptions</div>
+                                <div class="stats-card-label">redemptions</div>
                             </div>
                             <div class="stats-card">
                                 <div class="stats-card-header">Spins (30 Days)</div>
                                 <div class="stats-card-value"><%= roleWheelStats.recent.last30Days.toLocaleString() %></div>
-                                <div class="stats-card-label">recent redemptions</div>
+                                <div class="stats-card-label">redemptions</div>
+                            </div>
+                            <div class="stats-card">
+                                <div class="stats-card-header">Spins (7 Days)</div>
+                                <div class="stats-card-value"><%= roleWheelStats.recent.last7Days.toLocaleString() %></div>
+                                <div class="stats-card-label">redemptions</div>
+                            </div>
+                            <div class="stats-card">
+                                <div class="stats-card-header">Unique Participants</div>
+                                <div class="stats-card-value"><%= roleWheelStats.uniqueUsers.toLocaleString() %></div>
+                                <div class="stats-card-label">users</div>
                             </div>
                         </div>
 
