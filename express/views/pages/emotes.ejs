@@ -1,0 +1,111 @@
+<%
+const pageTitle = 'Manage Emotes';
+const pageDescription = 'Configure emotes that can trigger reactions and customize their settings.';
+const currentPath = '/emotes';
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("../partials/head") %>
+
+    <link rel="stylesheet" href="/assets/css/navigation.css">
+    <link rel="stylesheet" href="/assets/css/tables.css">
+    <link rel="stylesheet" href="/assets/css/inputs.css">
+    <link rel="stylesheet" href="/assets/css/alerts.css">
+
+    <script src="/assets/js/navigation.js" defer></script>
+    <script src="/assets/js/manager.js" defer></script>
+
+    <title><%= pageTitle %> - Shrine Manager</title>
+</head>
+<body>
+    <%- include("../partials/navigation", { currentPath }) %>
+    
+    <main class="main-content">
+        <div class="container container-lg">
+            <% if (locals.error) { %>
+            <div class="alert alert-danger alert-fixed">
+                <strong>Error:</strong>
+                <%= error %>
+            </div>
+            <% } else if (locals.info) { %>
+            <div class="alert alert-info alert-fixed">
+                <strong>Info:</strong>
+                <%= info %>
+            </div>
+            <% } %>
+            
+            <div class="page-header">
+                <h1 class="page-title"><%= pageTitle %></h1>
+                <p class="page-description"><%= pageDescription %></p>
+            </div>
+
+            <div class="col col-12">
+                <!-- Add New Emote -->
+                <div class="section">
+                    <h2>Add Emote</h2>
+                    <form method="POST" action="/emotes/new" class="form-inline">
+                        <label for="emote">Select an emote to add</label>
+                        <select name="emote" id="emote" class="noblock">
+                            <% let lastType = ""; allEmotes.forEach(emote => { %>
+                            <% if (emote.type !== lastType) { %>
+                            <option value="null" disabled="disabled"><%= emote.type.toUpperCase() %></option>
+                            <% lastType = emote.type; } %>
+                            <option value="<%= emote.code %>"><%= emote.code %></option>
+                            <% }) %>
+                        </select>
+                        <input type="submit" value="Add Emote">
+                    </form>
+                </div>
+
+                <!-- Emotes List -->
+                <form method="POST" action="/emotes" class="section">
+                    <h2>Configured Emotes</h2>
+                    
+                    <% if (emotes.length > 0) { %>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Emote</th>
+                                <th>Code</th>
+                                <th>Display Name</th>
+                                <th>Enabled</th>
+                                <th>Remove</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% let lastPlatform = ""; emotes.forEach(emote => { if (lastPlatform !== emote.platform) { lastPlatform = emote.platform; %>
+                            <tr>
+                                <th colspan="5"><%= lastPlatform.toUpperCase() %></th>
+                            </tr>
+                            <% } %>
+                            <tr>
+                                <td><img src="<%= emote.link %>" alt="<%= emote.code %>"></td>
+                                <td><%= emote.code %></td>
+                                <td>
+                                    <input type="text" name="<%= emote._id %>-name" id="<%= emote._id %>" value="<%= emote.displayName %>">
+                                </td>
+                                <td>
+                                    <input type="checkbox" name="enabled[<%= emote._id %>]" id="enabled-<%= emote._id %>"<%- emote.enabled ? ` checked="checked"` : "" %>>
+                                </td>
+                                <td>
+                                    <a href="/emotes/delete/<%= emote._id %>" class="button button--danger button--small">Remove</a>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                    <input type="submit" value="Update Emotes">
+                    <% } else { %>
+                    <div class="empty-state">
+                        <p class="text-muted text-center">No emotes configured yet. Add an emote above to get started!</p>
+                    </div>
+                    <% } %>
+                </form>
+            </div>
+        </div>
+    </main>
+    
+    <%- include("../partials/footer") %>
+</body>
+</html>

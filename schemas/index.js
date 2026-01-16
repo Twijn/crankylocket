@@ -9,6 +9,7 @@ const TwitchReward = require("./TwitchReward");
 const TwitchToken = require("./TwitchToken");
 
 const WispReaction = require("./WispReaction");
+const RoleWheelRedemption = require("./RoleWheelRedemption");
 
 const schemas = {
     Setting,
@@ -20,6 +21,7 @@ const schemas = {
     TwitchToken,
 
     WispReaction,
+    RoleWheelRedemption,
 }
 
 mongoose.connect(process.env.MDB_URL).then(() => {

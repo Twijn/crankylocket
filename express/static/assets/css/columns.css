@@ -1,17 +1,28 @@
+/* ============================================
+   Grid System
+   ============================================ */
 .container {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
+    gap: var(--space-lg);
 }
 
+/* Responsive breakpoints */
 @media screen and (max-width: 1200px) {
     .container-lg {
         display: block;
+    }
+    .container-lg > [class*="col-"] {
+        margin-bottom: var(--space-lg);
     }
 }
 
 @media screen and (max-width: 1000px) {
     .container-md {
         display: block;
+    }
+    .container-md > [class*="col-"] {
+        margin-bottom: var(--space-md);
     }
 }
 
@@ -21,54 +32,41 @@
     }
 }
 
-.col-1 {
-    grid-column: span 1;
+/* Column spans */
+.col-1 { grid-column: span 1; }
+.col-2 { grid-column: span 2; }
+.col-3 { grid-column: span 3; }
+.col-4 { grid-column: span 4; }
+.col-5 { grid-column: span 5; }
+.col-6 { grid-column: span 6; }
+.col-7 { grid-column: span 7; }
+.col-8 { grid-column: span 8; }
+.col-9 { grid-column: span 9; }
+.col-10 { grid-column: span 10; }
+.col-11 { grid-column: span 11; }
+.col-12 { grid-column: span 12; }
+
+/* Inner grid for form layouts */
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
 }
 
-.col-2 {
-    grid-column: span 2;
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
 }
 
-.col-3 {
-    grid-column: span 3;
+.grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
 }
 
-.col-4 {
-    grid-column: span 4;
-}
-
-.col-5 {
-    grid-column: span 5;
-}
-
-.col-6 {
-    grid-column: span 6;
-}
-
-.col-7 {
-    grid-column: span 7;
-}
-
-.col-8 {
-    grid-column: span 8;
-}
-
-.col-9 {
-    grid-column: span 9;
-}
-
-.col-10 {
-    grid-column: span 10;
-}
-
-.col-11 {
-    grid-column: span 11;
-}
-
-.col-12 {
-    grid-column: span 12;
-}
-
-.col-margin {
-    margin: 0 .5em;
+@media screen and (max-width: 800px) {
+    .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
+    }
 }

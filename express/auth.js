@@ -10,7 +10,10 @@ const TWITCH_URI = `https://id.twitch.tv/oauth2/authorize?response_type=code&cli
 
 router.get("/", (req, res) => {
     if (req?.query?.code) {
-        authProvider.addUserForCode(req.query.code, ["chat"]).then(async user => {
+        // Only add "chat" intent for first-time setup; otherwise add user without intents
+        // The "chat" intent should only be assigned to the designated bot user
+        const intents = global.authSetup ? [] : ["chat"];
+        authProvider.addUserForCode(req.query.code, intents).then(async user => {
             const tokenData = await authProvider.getAccessTokenForUser(user);
 
             const helixUser = await api.users.getUserById(user);
@@ -43,6 +46,11 @@ router.get("/", (req, res) => {
                     new: true,
                 })
 
+                // If this user is the designated bot user, add the chat intent
+                if (token.settings.useAsBot) {
+                    authProvider.addIntentsToUser(user, ["chat"]);
+                }
+
                 if (!token.settings.authorized) {
                     return res.send("You are not authorized to access this yet!");
                 }
@@ -58,6 +66,18 @@ router.get("/", (req, res) => {
     } else {
         res.redirect(TWITCH_URI);
     }
+});
+
+router.get("/logout", (req, res) => {
+    const sessionId = req.cookies?.m_session;
+    if (sessionId) {
+        const index = req.sessions.indexOf(sessionId);
+        if (index > -1) {
+            req.sessions.splice(index, 1);
+        }
+    }
+    res.clearCookie("m_session", { domain: process.env.EXPRESS_COOKIE_DOMAIN });
+    res.render("pages/logout");
 });
 
 module.exports = router;

@@ -10,6 +10,14 @@ client.once(Events.ClientReady, readyClient => {
 	client.guilds.fetch({}).then(guilds => {
 		for (let [guildId, oauthGuild] of guilds) {
 			oauthGuild.fetch().then(async guild => {
+				// Fetch all members to cache them for search
+				try {
+					await guild.members.fetch();
+					console.log(`Cached ${guild.members.cache.size} members from ${guild.name}`);
+				} catch (err) {
+					console.error("Failed to fetch guild members:", err.message);
+				}
+
 				const botRole = guild.roles.botRoleFor(client.user.id);
 				if (!botRole) {
 					console.error("Unable to get bot role. All roles will be marked as unassignable.");

@@ -26,17 +26,17 @@ router.post("/", async (req, res) => {
     for (let i = 0; i < emotes.length; i++) {
         await emotes[i].save();
     }
-    res.redirect("/?info=Emotes+updated!+Changes+may+take+30+seconds+to+take+effect");
+    res.redirect("/emotes?info=Emotes+updated!+Changes+may+take+30+seconds+to+take+effect");
 });
 
 router.post("/new", async (req, res) => {
     if (!req?.body?.emote) {
-        return res.redirect("/?error=Unable+to+get+emote+attribute");
+        return res.redirect("/emotes?error=Unable+to+get+emote+attribute");
     }
     const emote = fetcher.emotes.get(req.body.emote)
 
     if (!emote) {
-        return res.redirect("/?error=Emote+not+found!");
+        return res.redirect("/emotes?error=Emote+not+found!");
     }
 
     await TwitchEmote.create({
@@ -48,12 +48,12 @@ router.post("/new", async (req, res) => {
         requirements: global.defaultRequirements,
     });
 
-    res.redirect(`/?info=Emote+${encodeURIComponent(emote.code)}+added!`);
+    res.redirect(`/emotes?info=Emote+${encodeURIComponent(emote.code)}+added!`);
 });
 
 router.post("/requirements", async (req, res) => {
     if (!req?.body?.emoteCount || !req?.body?.emoteTime || !req?.body?.maxPerUser || !req?.body?.lastingTime) {
-        return res.redirect("/?error=Missing+parameter");
+        return res.redirect("/settings?error=Missing+parameter");
     }
 
     const emoteCount = Number(req.body.emoteCount);
@@ -62,7 +62,7 @@ router.post("/requirements", async (req, res) => {
     const lastingTime = Number(req.body.lastingTime);
 
     if (isNaN(emoteCount + emoteTime + maxPerUser + lastingTime)) {
-        return res.redirect("/?error=At+least+one+variable+is+not+a+number!");
+        return res.redirect("/settings?error=At+least+one+variable+is+not+a+number!");
     }
 
     const settings = await utils.settings.get();
@@ -73,12 +73,12 @@ router.post("/requirements", async (req, res) => {
 
     await utils.settings.save();
     
-    res.redirect("/?info=Requirements+updated!");
+    res.redirect("/settings?info=Requirements+updated!");
 });
 
 router.get("/delete/:id", async (req, res) => {
     await TwitchEmote.findByIdAndDelete(req.params.id);
-    res.redirect("/?info=Emote+deleted!");
+    res.redirect("/emotes?info=Emote+deleted!");
 });
 
 module.exports = router;

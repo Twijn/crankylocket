@@ -1,0 +1,139 @@
+<%
+const pageTitle = 'Settings';
+const pageDescription = 'Configure overlay positions, reaction settings, and wheel behavior.';
+const currentPath = '/settings';
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("../partials/head") %>
+
+    <link rel="stylesheet" href="/assets/css/navigation.css">
+    <link rel="stylesheet" href="/assets/css/tables.css">
+    <link rel="stylesheet" href="/assets/css/inputs.css">
+    <link rel="stylesheet" href="/assets/css/alerts.css">
+
+    <script src="/assets/js/navigation.js" defer></script>
+    <script src="/assets/js/manager.js" defer></script>
+
+    <title><%= pageTitle %> - Shrine Manager</title>
+</head>
+<body>
+    <%- include("../partials/navigation", { currentPath }) %>
+    
+    <main class="main-content">
+        <div class="container container-lg">
+            <% if (restart) { %>
+            <script>
+            setTimeout(() => {
+                window.location.href = "/settings?info=Settings%20updated%20successfully";
+            }, 3000);
+            </script>
+            <div class="alert alert-info alert-fixed">
+                <strong>Info:</strong>
+                Restarting services, please wait...
+            </div>
+            <% } %>
+            <% if (locals.error) { %>
+            <div class="alert alert-danger alert-fixed">
+                <strong>Error:</strong>
+                <%= error %>
+            </div>
+            <% } else if (locals.info) { %>
+            <div class="alert alert-info alert-fixed">
+                <strong>Info:</strong>
+                <%= info %>
+            </div>
+            <% } %>
+            
+            <div class="page-header">
+                <h1 class="page-title"><%= pageTitle %></h1>
+                <p class="page-description"><%= pageDescription %></p>
+            </div>
+
+            <div class="col col-12">
+                <form method="POST" action="/settings" class="section">
+                    <h2>Overlay Settings</h2>
+                    <p>Configure the position and behavior of the overlay elements.</p>
+                    
+                    <div class="grid-4">
+                        <div class="form-group">
+                            <label for="wheelPosition">Wheel Position</label>
+                            <select name="wheelPosition" id="wheelPosition">
+                                <option value="4"<%- settings.wheelCss === "left:2em;top:2em;" ? ' selected="selected"' : "" %>>Top Left</option>
+                                <option value="1"<%- settings.wheelCss === "right:2em;top:2em;" ? ' selected="selected"' : "" %>>Top Right</option>
+                                <option value="2"<%- settings.wheelCss === "right:2em;bottom:2em;" ? ' selected="selected"' : "" %>>Bottom Right</option>
+                                <option value="3"<%- settings.wheelCss === "left:2em;bottom:2em;" ? ' selected="selected"' : "" %>>Bottom Left</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="reactionPosition">Live Reaction Position</label>
+                            <select name="reactionPosition" id="reactionPosition">
+                                <option value="4"<%- settings.reactionCss === "left:2em;top:2em;" ? ' selected="selected"' : "" %>>Top Left</option>
+                                <option value="1"<%- settings.reactionCss === "right:2em;top:2em;" ? ' selected="selected"' : "" %>>Top Right</option>
+                                <option value="2"<%- settings.reactionCss === "right:2em;bottom:2em;" ? ' selected="selected"' : "" %>>Bottom Right</option>
+                                <option value="3"<%- settings.reactionCss === "left:2em;bottom:2em;" ? ' selected="selected"' : "" %>>Bottom Left</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="reactionSetting">Reaction Setting</label>
+                            <select name="reactionSetting" id="reactionSetting">
+                                <option value="wisp"<%- settings.reactionSetting === "wisp" ? ' selected="selected"' : "" %>>Live Wisp Reaction</option>
+                                <option value="emote"<%- settings.reactionSetting === "emote" ? ' selected="selected"' : "" %>>Live (Emote) Reaction</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="wheelSetting">Wheel Setting</label>
+                            <select name="wheelSetting" id="wheelSetting">
+                                <option value="block"<%- settings.wheelSetting === "block" ? ' selected="selected"' : "" %>>Block - Prevent re-spin</option>
+                                <option value="remove"<%- settings.wheelSetting === "remove" ? ' selected="selected"' : "" %>>Remove - Replace existing role</option>
+                                <option value="ignore"<%- settings.wheelSetting === "ignore" ? ' selected="selected"' : "" %>>Ignore - Add another role</option>
+                            </select>
+                        </div>
+                    </div>
+                    <input type="submit" value="Update Settings">
+                </form>
+
+                <!-- Reaction Requirements -->
+                <form method="POST" action="/emotes/requirements" class="section">
+                    <h2>Reaction Requirements</h2>
+                    <p>Configure the thresholds for triggering chat reactions.</p>
+                    <div class="grid-4">
+                        <div class="form-group">
+                            <label for="emoteCount">Emote Count <small>Number of emotes to trigger the reaction</small></label>
+                            <input type="number" id="emoteCount" name="emoteCount" min="1" max="300" step="1" value="<%= emoteCount %>">
+                        </div>
+                        <div class="form-group">
+                            <label for="emoteTime">Emote Time <small>Maximum time for the emote count to be hit</small></label>
+                            <input type="number" name="emoteTime" id="emoteTime" min="1" max="300" step=".5" value="<%= emoteTime %>">
+                        </div>
+                        <div class="form-group">
+                            <label for="maxPerUser">Max Per User <small>Maximum emotes per user to trigger</small></label>
+                            <input type="number" name="maxPerUser" id="maxPerUser" min="1" max="300" step="1" value="<%= maxPerUser %>">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastingTime">Reaction Lasting Time <small>Seconds after last reaction to continue</small></label>
+                            <input type="number" name="lastingTime" id="lastingTime" min="1" max="300" step="0.5" value="<%= lastingTime %>">
+                        </div>
+                    </div>
+                    <input type="submit" value="Update Requirements">
+                </form>
+
+                <!-- Quick Links -->
+                <div class="section">
+                    <h2>Quick Actions</h2>
+                    <div class="button-group">
+                        <a href="/overlay" class="button button--secondary" target="_blank">Open Overlay</a>
+                        <form method="POST" action="/refresh-overlay" class="inline-form">
+                            <button type="submit" class="button button--primary">Refresh Overlays</button>
+                        </form>
+                        <a href="/auth/logout" class="button button--danger">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <%- include("../partials/footer") %>
+</body>
+</html>

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const { DiscordRole } = require("../../../schemas");
+const ws = require("../../ws");
 
 router.post("/", async (req, res) => {
     let body = req?.body;
@@ -19,7 +20,14 @@ router.post("/", async (req, res) => {
         }
         await roles[i].save();
     }
-    res.redirect("/?info=Role+settings+updated!+Please+make+sure+you+refresh+the+overlay!");
+
+    // Broadcast overlay refresh to all connected clients
+    ws.broadcast({
+        type: "refresh-overlay",
+        message: "Refreshing overlay: role settings updated",
+    });
+
+    res.redirect("/roles?info=Role+settings+updated!+Overlays+will+refresh+automatically.");
 });
 
 module.exports = router;

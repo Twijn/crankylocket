@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("../partials/head") %>
+
+    <link rel="stylesheet" href="/assets/css/navigation.css">
+    <link rel="stylesheet" href="/assets/css/tables.css">
+    <link rel="stylesheet" href="/assets/css/inputs.css">
+    <link rel="stylesheet" href="/assets/css/alerts.css">
+
+    <script src="/assets/js/navigation.js" defer></script>
+    <script src="/assets/js/manager.js" defer></script>
+
+    <title><%= typeof pageTitle !== 'undefined' ? pageTitle + ' - ' : '' %>CrankyLocket</title>
+</head>
+<body>
+    <%- include("../partials/navigation", { currentPath: typeof currentPath !== 'undefined' ? currentPath : '/' }) %>
+    
+    <main class="main-content">
+        <div class="container container-lg">
+            <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-danger alert-fixed">
+                <strong>Error:</strong>
+                <%= error %>
+            </div>
+            <% } else if (typeof info !== 'undefined' && info) { %>
+            <div class="alert alert-info alert-fixed">
+                <strong>Info:</strong>
+                <%= info %>
+            </div>
+            <% } %>
+            
+            <div class="page-header">
+                <h1 class="page-title"><%= typeof pageTitle !== 'undefined' ? pageTitle : 'Dashboard' %></h1>
+                <% if (typeof pageDescription !== 'undefined' && pageDescription) { %>
+                <p class="page-description"><%= pageDescription %></p>
+                <% } %>
+            </div>
+
+            <%- body %>
+        </div>
+    </main>
+    
+    <%- include("../partials/footer") %>
+</body>
+</html>

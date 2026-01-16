@@ -1,46 +1,410 @@
+/* ============================================
+   CSS Custom Properties (Theme Variables)
+   ============================================ */
 :root {
-    --primary-theme-color: #4242e8;
-    --secondary-theme-color: #5c5cf0;
-    --shadow: 2px 2px 7px rgba(0,0,0,0.1);
+    /* Colors */
+    --color-primary: #5865F2;
+    --color-primary-hover: #4752C4;
+    --color-primary-light: #7983F5;
+    
+    --color-success: #3BA55C;
+    --color-warning: #FAA61A;
+    --color-danger: #ED4245;
+    --color-info: #00AFF4;
+    
+    /* Neutrals */
+    --color-bg: #f4f5f7;
+    --color-surface: #ffffff;
+    --color-surface-alt: #f9fafb;
+    --color-border: #e3e5e8;
+    --color-border-light: #ebedef;
+    
+    /* Text */
+    --color-text: #2e3338;
+    --color-text-muted: #6a7480;
+    --color-text-light: #99a1ad;
+    --color-text-inverse: #ffffff;
+    
+    /* Spacing Scale */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-full: 9999px;
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+    
+    /* Transitions */
+    --transition-fast: 150ms ease;
+    --transition-normal: 250ms ease;
+    
+    /* Typography */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-md: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    
+    /* Layout */
+    --header-height: 60px;
+}
+
+/* ============================================
+   Reset & Base Styles
+   ============================================ */
+*, *::before, *::after {
+    box-sizing: border-box;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-family);
+    font-size: var(--font-size-md);
+    line-height: 1.5;
+    color: var(--color-text);
+    background-color: var(--color-bg);
     margin: 0;
     padding: 0;
+    -webkit-font-smoothing: antialiased;
 }
 
+/* ============================================
+   Header
+   ============================================ */
 header {
-    background-color: var(--primary-theme-color);
-    color: #ffffff;
-    padding: .8em;
+    background-color: var(--color-primary);
+    color: var(--color-text-inverse);
+    padding: 0 var(--space-lg);
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-md);
 }
 
 header h1 {
     margin: 0;
-    font-size: 1.6em;
-    font-weight: 400;
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    letter-spacing: -0.01em;
 }
 
-.section {
-    margin: .8em;
-    padding: .8em;
-    background-color: #f6f6f6;
-    border-radius: 0 5px 5px 5px;
-}
-
-.section h2 {
-    font-size: 1.2em;
-    font-weight: 300;
-    margin: 0 0 .8em 0;
-}
-
-.color {
-    width: 1em;
-    height: 1em;
+/* ============================================
+   Main Container
+   ============================================ */
+main.container {
+    padding: var(--space-lg);
+    max-width: 1600px;
     margin: 0 auto;
 }
 
+/* ============================================
+   Cards / Sections
+   ============================================ */
+.section {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    margin-bottom: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-border-light);
+}
+
+.section h2 {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0 0 var(--space-md) 0;
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.section p {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    margin: 0 0 var(--space-md) 0;
+}
+
+/* ============================================
+   Utility: Colors
+   ============================================ */
+.color {
+    width: 1.25rem;
+    height: 1.25rem;
+    border-radius: var(--radius-sm);
+    margin: 0 auto;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+}
+
+/* ============================================
+   State Classes
+   ============================================ */
 tr.unassignable {
-    background-color: #f6d0d0;
+    background-color: #fef2f2;
+}
+
+tr.unassignable td {
+    color: var(--color-text-muted);
+}
+
+/* ============================================
+   Text Utilities
+   ============================================ */
+.text-muted {
+    color: var(--color-text-muted);
+}
+
+.text-sm {
+    font-size: var(--font-size-sm);
+}
+
+.text-xs {
+    font-size: var(--font-size-xs);
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* ============================================
+   Spacing Utilities
+   ============================================ */
+.mt-sm { margin-top: var(--space-sm); }
+.mt-md { margin-top: var(--space-md); }
+.mt-lg { margin-top: var(--space-lg); }
+.mb-sm { margin-bottom: var(--space-sm); }
+.mb-md { margin-bottom: var(--space-md); }
+.mb-lg { margin-bottom: var(--space-lg); }
+
+/* ============================================
+   Flex Utilities
+   ============================================ */
+.flex { display: flex; }
+.flex-wrap { flex-wrap: wrap; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-sm { gap: var(--space-sm); }
+.gap-md { gap: var(--space-md); }
+
+/* ============================================
+   Empty States
+   ============================================ */
+.empty-state {
+    text-align: center;
+    padding: var(--space-2xl) var(--space-lg);
+    background-color: var(--color-surface-alt);
+    border-radius: var(--radius-md);
+    border: 2px dashed var(--color-border);
+}
+
+.empty-state p {
+    margin: 0;
+    color: var(--color-text-muted);
+}
+
+.empty-state .button {
+    margin-top: var(--space-md);
+}
+
+/* ============================================
+   Reaction Stats
+   ============================================ */
+.reaction-stats {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-border);
+}
+
+.stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-md);
+}
+
+.stats-header h3 {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+}
+
+.last-activity {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.stats-card {
+    background: var(--color-surface-alt);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+}
+
+.stats-card--highlight {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+}
+
+.stats-card-header {
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xs);
+}
+
+.stats-card-value {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.1;
+}
+
+.stats-card-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-top: var(--space-xs);
+}
+
+.stats-card-detail {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-light);
+    margin-top: var(--space-xs);
+}
+
+.top-emotes-section h4 {
+    font-size: var(--font-size-md);
+    font-weight: 600;
+    margin: 0 0 var(--space-sm) 0;
+}
+
+.emote-count {
+    font-weight: 400;
+    color: var(--color-text-muted);
+}
+
+.top-emotes-table {
+    font-size: var(--font-size-sm);
+}
+
+.top-emotes-table th {
+    text-align: left;
+    padding: var(--space-xs) var(--space-sm);
+}
+
+.top-emotes-table td {
+    padding: var(--space-xs) var(--space-sm);
+    text-align: left;
+}
+
+.rank-cell {
+    color: var(--color-text-light);
+    width: 2em;
+}
+
+.emote-cell {
+    font-weight: 500;
+}
+
+.emote-img-cell {
+    width: 2.5em;
+}
+
+.emote-img {
+    height: 1.75rem;
+    width: auto;
+    vertical-align: middle;
+}
+
+/* ============================================
+   Recent Reactions
+   ============================================ */
+.recent-reactions-section {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-border-light);
+}
+
+.recent-reactions-section h4 {
+    font-size: var(--font-size-md);
+    font-weight: 600;
+    margin: 0 0 var(--space-md) 0;
+}
+
+.recent-reactions-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-sm);
+}
+
+.recent-reaction-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-sm) var(--space-md);
+    background-color: var(--color-surface-alt);
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast);
+}
+
+.recent-reaction-item:hover {
+    background-color: var(--color-border-light);
+}
+
+.recent-reaction-emote {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.recent-reaction-emote .emote-img {
+    height: 1.5rem;
+}
+
+.recent-reaction-emote .emote-code {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.recent-reaction-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.recent-reaction-stats .reaction-count {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.recent-reaction-stats .reaction-time {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+.uptime-info {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-top: var(--space-sm);
 }

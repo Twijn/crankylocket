@@ -8,8 +8,16 @@ let websockets = [];
 
 let nextWebsocketId = 1;
 
+// Stats tracking
+const stats = {
+    totalConnections: 0,
+    messagesSent: 0,
+    startTime: new Date(),
+};
+
 router.ws("/", (ws, req) => {
     ws.id = nextWebsocketId++;
+    stats.totalConnections++;
 
     console.log("New websocket " + ws.id);
     websockets.push(ws);
@@ -52,6 +60,7 @@ const broadcast = message => {
     websockets.forEach(ws => {
         ws.send(message);
     });
+    stats.messagesSent += websockets.length;
 
     return websockets.length;
 }
@@ -60,8 +69,16 @@ setInterval(() => {
     broadcast({type: "keep-alive"});
 }, 10000);
 
+const getStats = () => ({
+    currentConnections: websockets.length,
+    totalConnections: stats.totalConnections,
+    messagesSent: stats.messagesSent,
+    uptime: Math.floor((Date.now() - stats.startTime.getTime()) / 1000),
+});
+
 module.exports = {
     router,
     broadcast,
     eventHandler,
+    getStats,
 };

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const utils = require("../../../utils");
+const ws = require("../../ws");
 
 router.post("/", async (req, res) => {
     const settings = await utils.settings.get();
@@ -10,7 +11,7 @@ router.post("/", async (req, res) => {
         !req?.body?.reactionSetting ||
         !req?.body?.wheelSetting
     ) {
-        return res.redirect("/?error=Missing+parameter");
+        return res.redirect("/settings?error=Missing+parameter");
     }
 
     if (req.body.wheelPosition == 1) {
@@ -38,7 +39,13 @@ router.post("/", async (req, res) => {
 
     await settings.save();
 
-    res.redirect("/?info=Settings+updated!");
+    // Broadcast overlay refresh to all connected clients
+    ws.broadcast({
+        type: "refresh-overlay",
+        message: "Refreshing overlay: settings updated",
+    });
+
+    res.redirect("/settings?info=Settings+updated!+Overlays+will+refresh+automatically.");
 });
 
 module.exports = router;

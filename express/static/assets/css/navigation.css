@@ -1,0 +1,336 @@
+/* ============================================
+   Navigation - Modern Multi-Platform Design
+   ============================================ */
+
+.nav {
+    background: linear-gradient(135deg, var(--color-primary) 0%, #4752C4 100%);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 12px rgba(88, 101, 242, 0.25);
+}
+
+.nav-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 var(--space-xl);
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+    height: var(--header-height);
+}
+
+/* ============================================
+   Brand / Logo
+   ============================================ */
+.nav-brand {
+    flex-shrink: 0;
+}
+
+.nav-logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    text-decoration: none;
+    color: var(--color-text-inverse);
+    font-weight: 700;
+    font-size: var(--font-size-lg);
+    transition: opacity var(--transition-fast);
+}
+
+.nav-logo:hover {
+    opacity: 0.9;
+}
+
+.nav-logo-icon {
+    width: 28px;
+    height: 28px;
+    color: var(--color-text-inverse);
+    opacity: 0.9;
+}
+
+.nav-logo-text {
+    letter-spacing: -0.02em;
+}
+
+/* ============================================
+   Desktop Navigation Menu
+   ============================================ */
+.nav-menu {
+    display: flex;
+    flex: 1;
+}
+
+.nav-menu-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-item {
+    position: relative;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.75);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--color-text-inverse);
+}
+
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: var(--color-text-inverse);
+}
+
+.nav-link.active:hover {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+.nav-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    opacity: 0.85;
+}
+
+.nav-link.active .nav-icon,
+.nav-link:hover .nav-icon {
+    opacity: 1;
+}
+
+/* ============================================
+   Navigation Footer (Secondary Actions)
+   ============================================ */
+.nav-footer {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-left: auto;
+}
+
+.nav-link-secondary {
+    color: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.nav-link-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: var(--color-text-inverse);
+}
+
+.nav-link-danger {
+    color: #fca5a5;
+}
+
+.nav-link-danger:hover {
+    background-color: rgba(239, 68, 68, 0.2);
+    color: #fecaca;
+}
+
+/* ============================================
+   Mobile Toggle Button
+   ============================================ */
+.nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    padding: var(--space-sm);
+    cursor: pointer;
+    z-index: 1001;
+    margin: 0;
+}
+
+.nav-toggle-icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 24px;
+    height: 18px;
+}
+
+.nav-toggle-icon span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: var(--color-text-inverse);
+    border-radius: 2px;
+    transition: all var(--transition-fast);
+    transform-origin: center;
+}
+
+/* Hamburger to X animation */
+.nav-toggle.active .nav-toggle-icon span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.nav-toggle.active .nav-toggle-icon span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+}
+
+.nav-toggle.active .nav-toggle-icon span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* ============================================
+   Mobile Backdrop
+   ============================================ */
+.nav-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity var(--transition-normal);
+}
+
+.nav-backdrop.active {
+    opacity: 1;
+}
+
+/* ============================================
+   Mobile Styles
+   ============================================ */
+@media screen and (max-width: 900px) {
+    .nav-toggle {
+        display: block;
+    }
+
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 280px;
+        height: 100vh;
+        background-color: var(--color-surface);
+        box-shadow: var(--shadow-lg);
+        transform: translateX(100%);
+        transition: transform var(--transition-normal);
+        z-index: 1000;
+        overflow-y: auto;
+    }
+
+    .nav-menu.active {
+        transform: translateX(0);
+    }
+
+    .nav-menu-inner {
+        flex-direction: column;
+        align-items: stretch;
+        padding: var(--space-xl) var(--space-md);
+        gap: var(--space-md);
+    }
+
+    .nav-links {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-xs);
+    }
+
+    .nav-link {
+        padding: var(--space-md);
+        border-radius: var(--radius-md);
+    }
+
+    .nav-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-sm);
+        margin-left: 0;
+        margin-top: var(--space-lg);
+        padding-top: var(--space-lg);
+        border-top: 1px solid var(--color-border-light);
+    }
+
+    .nav-backdrop {
+        display: block;
+        pointer-events: none;
+    }
+
+    .nav-backdrop.active {
+        pointer-events: auto;
+    }
+}
+
+/* ============================================
+   Main Content Adjustments
+   ============================================ */
+.main-content {
+    min-height: calc(100vh - var(--header-height));
+    padding: var(--space-xl) 0;
+}
+
+.main-content .container {
+    padding: 0 var(--space-xl);
+}
+
+/* ============================================
+   Page Header
+   ============================================ */
+.page-header {
+    grid-column: 1 / -1;
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.page-title {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0 0 var(--space-xs) 0;
+    letter-spacing: -0.02em;
+}
+
+.page-description {
+    font-size: var(--font-size-md);
+    color: var(--color-text-muted);
+    margin: 0;
+    max-width: 60ch;
+}
+
+/* ============================================
+   Skip to main content (Accessibility)
+   ============================================ */
+.skip-link {
+    position: absolute;
+    top: -100%;
+    left: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    background-color: var(--color-primary);
+    color: var(--color-text-inverse);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-weight: 500;
+    z-index: 9999;
+    transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+    top: var(--space-md);
+}

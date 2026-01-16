@@ -132,6 +132,7 @@ const stopReaction = async broadcasterId => {
         emoteCode: currentReaction.emote.code,
         reactions: currentReaction.count,
         startTime: currentReaction.startTime,
+        endTime: new Date(),
     });
 
     currentReaction = null;

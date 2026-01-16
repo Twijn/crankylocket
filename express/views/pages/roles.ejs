@@ -1,0 +1,249 @@
+<%
+const pageTitle = 'Manage Roles';
+const pageDescription = 'Configure Discord roles for the role wheel and customize their appearance.';
+const currentPath = '/roles';
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("../partials/head") %>
+
+    <link rel="stylesheet" href="/assets/css/navigation.css">
+    <link rel="stylesheet" href="/assets/css/tables.css">
+    <link rel="stylesheet" href="/assets/css/inputs.css">
+    <link rel="stylesheet" href="/assets/css/alerts.css">
+
+    <script src="/assets/js/navigation.js" defer></script>
+    <script src="/assets/js/manager.js" defer></script>
+
+    <title><%= pageTitle %> - Shrine Manager</title>
+</head>
+<body>
+    <%- include("../partials/navigation", { currentPath }) %>
+    
+    <main class="main-content">
+        <div class="container container-lg">
+            <% if (locals.error) { %>
+            <div class="alert alert-danger alert-fixed">
+                <strong>Error:</strong>
+                <%= error %>
+            </div>
+            <% } else if (locals.info) { %>
+            <div class="alert alert-info alert-fixed">
+                <strong>Info:</strong>
+                <%= info %>
+            </div>
+            <% } %>
+            
+            <div class="page-header">
+                <h1 class="page-title"><%= pageTitle %></h1>
+                <p class="page-description"><%= pageDescription %></p>
+            </div>
+
+            <div class="col col-12">
+                <form method="POST" action="/roles" class="section">
+                    <h2>Discord Roles</h2>
+                    <p>Configure which roles appear on the role wheel and customize their colors. Roles marked as unassignable are placed above the bot role in Discord.</p>
+                    
+                    <div class="alert alert-warning">
+                        <strong>Important:</strong>
+                        To add a role as a role wheel item, the <strong><%= botName %></strong> role must be placed <em>above</em> that role in Discord's Server Settings → Roles. Roles above the bot cannot be assigned.
+                    </div>
+
+                    <% if (discordRoles.length > 0) { %>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Color</th>
+                                <th>Name</th>
+                                <th>Wheel Color</th>
+                                <th>Wheel Text Color</th>
+                                <th>Role Wheel</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% discordRoles.forEach(role => { %>
+                            <tr<%- role.assignable ? "" : ' class="unassignable" title="This role is placed above the bot role and may not be assigned by the bot."' %>>
+                                <td><div class="color" style="background-color: <%= role.color %>;"></div></td>
+                                <td><%= role.name %></td>
+                                <td><input type="color" name="wheelColor[<%= role._id %>]" id="color-<%= role._id %>" value="<%- role.settings.wheelColor ? role.settings.wheelColor : role.color %>"<%- role.assignable ? "" : ' disabled="disabled"' %>></td>
+                                <td><input type="color" name="wheelTextColor[<%= role._id %>]" id="textcolor-<%= role._id %>" value="<%- role.settings.wheelTextColor ? role.settings.wheelTextColor : "#ffffff" %>"<%- role.assignable ? "" : ' disabled="disabled"' %>></td>
+                                <td><input type="checkbox" name="roleAdd[<%= role._id %>]" id="roleadd-<%= role._id %>"<%- role.settings.roleAdd ? ' checked="checked"' : "" %><%- role.assignable ? "" : ' disabled="disabled"' %>></td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                    <input type="submit" value="Update Roles">
+                    <% } else { %>
+                    <div class="empty-state mt-lg">
+                        <p class="text-muted text-center">No Discord roles found. Make sure the bot is connected to your server.</p>
+                    </div>
+                    <% } %>
+                </form>
+
+                <!-- Role Wheel Override -->
+                <form method="POST" action="/spin-wheel" class="section" style="margin-top: 2rem;">
+                    <h2>Manual Role Wheel Spin</h2>
+                    <p>Manually trigger a role wheel spin for a user. This bypasses Twitch channel point redemption.</p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; max-width: 600px;">
+                        <div>
+                            <label for="twitchUsername">Twitch Username
+                                <small>Display name for the overlay</small>
+                            </label>
+                            <input type="text" name="twitchUsername" id="twitchUsername" placeholder="Enter Twitch username" required>
+                        </div>
+                        <div>
+                            <label for="discordMemberSearch">Discord Member
+                                <small>Search by username or ID</small>
+                            </label>
+                            <input type="text" id="discordMemberSearch" placeholder="Search Discord members..." autocomplete="off">
+                            <input type="hidden" name="discordMemberId" id="discordMemberId" required>
+                            <div id="memberSearchResults" class="search-results"></div>
+                        </div>
+                    </div>
+                    <input type="submit" value="Spin Role Wheel" id="spinWheelBtn" disabled>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        .search-results {
+            position: absolute;
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .search-results.show {
+            display: block;
+        }
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--color-border-light);
+        }
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+        .search-result-item:hover {
+            background: var(--color-surface-alt);
+        }
+        .search-result-item.selected {
+            background: var(--color-primary);
+            color: white;
+        }
+        .search-result-item img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+        .search-result-item .member-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .search-result-item .member-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .search-result-item .member-id {
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+        #discordMemberSearch.has-selection {
+            border-color: var(--color-success);
+            background-color: rgba(67, 181, 129, 0.1);
+        }
+        form .section > div {
+            position: relative;
+        }
+    </style>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('discordMemberSearch');
+        const hiddenInput = document.getElementById('discordMemberId');
+        const resultsDiv = document.getElementById('memberSearchResults');
+        const submitBtn = document.getElementById('spinWheelBtn');
+        let searchTimeout;
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            const query = this.value.trim();
+            
+            // Clear selection when typing
+            hiddenInput.value = '';
+            searchInput.classList.remove('has-selection');
+            submitBtn.disabled = true;
+
+            if (query.length < 2) {
+                resultsDiv.classList.remove('show');
+                return;
+            }
+
+            searchTimeout = setTimeout(() => {
+                fetch('/json/members?search=' + encodeURIComponent(query))
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.members && data.members.length > 0) {
+                            resultsDiv.innerHTML = data.members.map(m => `
+                                <div class="search-result-item" data-id="${m.id}" data-username="${m.username}">
+                                    <img src="${m.avatar}" alt="">
+                                    <div class="member-info">
+                                        <span class="member-name">${m.displayName}</span>
+                                        <span class="member-id">@${m.username} • ${m.id}</span>
+                                    </div>
+                                </div>
+                            `).join('');
+                            resultsDiv.classList.add('show');
+                        } else {
+                            resultsDiv.innerHTML = '<div class="search-result-item"><span class="member-name">No members found</span></div>';
+                            resultsDiv.classList.add('show');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Search error:', err);
+                        resultsDiv.classList.remove('show');
+                    });
+            }, 300);
+        });
+
+        resultsDiv.addEventListener('click', function(e) {
+            const item = e.target.closest('.search-result-item');
+            if (item && item.dataset.id) {
+                hiddenInput.value = item.dataset.id;
+                searchInput.value = item.querySelector('.member-name').textContent + ' (@' + item.dataset.username + ')';
+                searchInput.classList.add('has-selection');
+                resultsDiv.classList.remove('show');
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Hide results when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!searchInput.contains(e.target) && !resultsDiv.contains(e.target)) {
+                resultsDiv.classList.remove('show');
+            }
+        });
+
+        // Show results on focus if there's a query
+        searchInput.addEventListener('focus', function() {
+            if (this.value.trim().length >= 2 && resultsDiv.innerHTML) {
+                resultsDiv.classList.add('show');
+            }
+        });
+    });
+    </script>
+    
+    <%- include("../partials/footer") %>
+</body>
+</html>

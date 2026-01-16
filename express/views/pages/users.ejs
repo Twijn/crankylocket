@@ -1,0 +1,111 @@
+<%
+const pageTitle = 'Manage Users';
+const pageDescription = 'Configure Twitch user permissions, bot accounts, and channel settings.';
+const currentPath = '/users';
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("../partials/head") %>
+
+    <link rel="stylesheet" href="/assets/css/navigation.css">
+    <link rel="stylesheet" href="/assets/css/tables.css">
+    <link rel="stylesheet" href="/assets/css/inputs.css">
+    <link rel="stylesheet" href="/assets/css/alerts.css">
+
+    <script src="/assets/js/navigation.js" defer></script>
+    <script src="/assets/js/manager.js" defer></script>
+
+    <title><%= pageTitle %> - Shrine Manager</title>
+</head>
+<body>
+    <%- include("../partials/navigation", { currentPath }) %>
+    
+    <main class="main-content">
+        <div class="container container-lg">
+            <% if (locals.restart) { %>
+            <script>
+            setTimeout(() => {
+                window.location.href = "/users?info=Changes%20applied%20successfully";
+            }, 3000);
+            </script>
+            <div class="alert alert-info alert-fixed">
+                <strong>Info:</strong>
+                Restarting services, please wait...
+            </div>
+            <% } %>
+            <% if (locals.error) { %>
+            <div class="alert alert-danger alert-fixed">
+                <strong>Error:</strong>
+                <%= error %>
+            </div>
+            <% } else if (locals.info) { %>
+            <div class="alert alert-info alert-fixed">
+                <strong>Info:</strong>
+                <%= info %>
+            </div>
+            <% } %>
+            
+            <div class="page-header">
+                <h1 class="page-title"><%= pageTitle %></h1>
+                <p class="page-description"><%= pageDescription %></p>
+            </div>
+
+            <div class="col col-12">
+                <form method="POST" action="/channels" class="section">
+                    <h2>Twitch Users</h2>
+                    <p>Manage user permissions and configure which accounts the bot uses.</p>
+                    
+                    <% if (tokens.length > 0) { %>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User Name</th>
+                                <th>Token Status</th>
+                                <th>Authorized<small>Allow access to this page</small></th>
+                                <th>Bot User<small>Speak as this user</small></th>
+                                <th>Channel<small>Channels to listen to for redemptions & messages</small></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% tokens.forEach(token => { 
+                                const now = Date.now();
+                                const expiresAt = token.tokenData.obtainmentTimestamp + (token.tokenData.expiresIn * 1000);
+                                const isValid = expiresAt > now;
+                                const hasRefresh = !!token.tokenData.refreshToken;
+                            %>
+                            <tr>
+                                <td>
+                                    <strong><%= token.userDisplayName %></strong>
+                                    <small class="text-muted" style="display: block;"><%= token.user %></small>
+                                </td>
+                                <td>
+                                    <% if (isValid) { %>
+                                    <span class="status-badge status-badge--success">Valid</span>
+                                    <% } else if (hasRefresh) { %>
+                                    <span class="status-badge status-badge--warning">Refresh</span>
+                                    <% } else { %>
+                                    <span class="status-badge status-badge--danger">Expired</span>
+                                    <% } %>
+                                </td>
+                                <td><input type="checkbox" id="authorized-<%= token.user %>" name="authorized[<%= token.user %>]"<% if (token.settings.authorized) { %> checked="checked"<%}%>></td>
+                                <td><input type="radio" id="botuser-<%= token.user %>" name="useAsBot" value="<%= token.user %>"<% if (token.settings.useAsBot) { %> checked="checked"<%}%>></td>
+                                <td><input type="checkbox" id="channel-<%= token.user %>" name="useAsChannel[<%= token.user %>]"<% if (token.settings.useAsChannel) { %> checked="checked"<%}%>></td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                    <input type="submit" value="Update Users">
+                    <% } else { %>
+                    <div class="empty-state mt-lg">
+                        <p class="text-muted text-center">No users connected yet. Connect a Twitch account to get started.</p>
+                    </div>
+                    <% } %>
+                </form>
+            </div>
+        </div>
+    </main>
+    
+    <%- include("../partials/footer") %>
+</body>
+</html>

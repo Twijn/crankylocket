@@ -1,6 +1,7 @@
 $(function() {
 
-const WS_URI = "wss://meiya.tms.to/ws";
+const WS_PROTOCOL = window.location.protocol === "https:" ? "wss:" : "ws:";
+const WS_URL = WS_PROTOCOL + "//" + window.location.host + "/ws";
 
 let websocket;
 
@@ -134,7 +135,7 @@ function spinNextWheel() {
 }
 
 function initWebsocket() {
-    websocket = new WebSocket(WS_URI);
+    websocket = new WebSocket(WS_URL);
 
     websocket.onmessage = function(msg) {
         try {
@@ -174,6 +175,15 @@ function initWebsocket() {
                 if (wheelQueue.length === 1 && !wheelSpinning) {
                     spinNextWheel();
                 }
+            } else if (data.type === "refresh-overlay") {
+                // Show notification and refresh page
+                const notification = $("#refresh-notification");
+                notification.find(".refresh-message").text(data.message || "Refreshing overlay...");
+                notification.fadeIn(300);
+                
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2500);
             }
         } catch(err) {
             console.error(err);

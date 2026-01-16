@@ -1,0 +1,292 @@
+<%
+const pageTitle = 'Dashboard';
+const pageDescription = 'Monitor your chat activity, reaction stats, and site status.';
+const currentPath = '/';
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("../partials/head") %>
+
+    <link rel="stylesheet" href="/assets/css/navigation.css">
+    <link rel="stylesheet" href="/assets/css/tables.css">
+    <link rel="stylesheet" href="/assets/css/inputs.css">
+    <link rel="stylesheet" href="/assets/css/alerts.css">
+
+    <script src="/assets/js/navigation.js" defer></script>
+    <script src="/assets/js/manager.js" defer></script>
+
+    <title><%= pageTitle %> - Shrine Manager</title>
+</head>
+<body>
+    <%- include("../partials/navigation", { currentPath }) %>
+    
+    <main class="main-content">
+        <div class="container container-lg">
+            <% if (locals.error) { %>
+            <div class="alert alert-danger alert-fixed">
+                <strong>Error:</strong>
+                <%= error %>
+            </div>
+            <% } else if (locals.info) { %>
+            <div class="alert alert-info alert-fixed">
+                <strong>Info:</strong>
+                <%= info %>
+            </div>
+            <% } %>
+            
+            <div class="page-header">
+                <h1 class="page-title"><%= pageTitle %></h1>
+                <p class="page-description"><%= pageDescription %></p>
+            </div>
+
+            <div class="col col-12">
+                <!-- Site Status -->
+                <div class="section">
+                    <h2>Site Status</h2>
+                    <div class="stats-cards">
+                        <div class="stats-card">
+                            <div class="stats-card-header">Overlay Connections</div>
+                            <div class="stats-card-value"><%= wsStats.currentConnections %></div>
+                            <div class="stats-card-label">active now</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-card-header">Total Connections</div>
+                            <div class="stats-card-value"><%= wsStats.totalConnections.toLocaleString() %></div>
+                            <div class="stats-card-label">since startup</div>
+                        </div>
+                        <div class="stats-card">
+                            <div class="stats-card-header">Messages Sent</div>
+                            <div class="stats-card-value"><%= wsStats.messagesSent.toLocaleString() %></div>
+                            <div class="stats-card-label">to overlays</div>
+                        </div>
+                    </div>
+                    <div class="uptime-info">
+                        v<%= appVersion %> &middot; Uptime: <%= Math.floor(wsStats.uptime / 3600) %>h <%= Math.floor((wsStats.uptime % 3600) / 60) %>m <%= wsStats.uptime % 60 %>s
+                    </div>
+                </div>
+
+                <!-- Chat Activity Stats -->
+                <% if (wispStats.reactionCount > 0) { %>
+                <div class="section">
+                    <div class="reaction-stats">
+                        <div class="stats-header">
+                            <h2 style="border: none; padding: 0; margin: 0;">Chat Activity</h2>
+                            <% if (wispStats.lastReaction) { %>
+                            <span class="last-activity">Last trigger: <%= wispStats.lastReaction.emoteCode %> with <%= wispStats.lastReaction.reactions %> reactions</span>
+                            <% } %>
+                        </div>
+                        
+                        <div class="stats-cards">
+                            <div class="stats-card">
+                                <div class="stats-card-header">All Time</div>
+                                <div class="stats-card-value"><%= wispStats.totalReactions.toLocaleString() %></div>
+                                <div class="stats-card-label">reactions across <%= wispStats.reactionCount.toLocaleString() %> triggers</div>
+                            </div>
+                            <div class="stats-card">
+                                <div class="stats-card-header">Last 7 Days</div>
+                                <div class="stats-card-value"><%= wispStats.recent.last7Days.reactions.toLocaleString() %></div>
+                                <div class="stats-card-label"><%= wispStats.recent.last7Days.triggers %> triggers</div>
+                            </div>
+                            <div class="stats-card">
+                                <div class="stats-card-header">Last 30 Days</div>
+                                <div class="stats-card-value"><%= wispStats.recent.last30Days.reactions.toLocaleString() %></div>
+                                <div class="stats-card-label"><%= wispStats.recent.last30Days.triggers %> triggers</div>
+                            </div>
+                        </div>
+                        <div class="stats-cards">
+                            <% if (wispStats.highestReaction) { %>
+                            <div class="stats-card stats-card--highlight">
+                                <div class="stats-card-header">Peak Reaction</div>
+                                <div class="stats-card-value"><%= wispStats.highestReaction.reactions.toLocaleString() %></div>
+                                <div class="stats-card-label"><%= wispStats.highestReaction.emoteCode %></div>
+                            </div>
+                            <% } %>
+                            <div class="stats-card">
+                                <div class="stats-card-header">Avg Reactions</div>
+                                <div class="stats-card-value"><%= wispStats.avgReactions %></div>
+                                <div class="stats-card-label">per trigger</div>
+                            </div>
+                            <div class="stats-card">
+                                <div class="stats-card-header">Unique Emotes</div>
+                                <div class="stats-card-value"><%= wispStats.uniqueEmotesUsed %></div>
+                                <div class="stats-card-label">triggered reactions</div>
+                            </div>
+                        </div>
+
+                        <% if (wispStats.topEmotes.length > 0) { %>
+                        <div class="top-emotes-section">
+                            <h4>Top Emotes <span class="emote-count">(<%= wispStats.uniqueEmotesUsed %> unique)</span></h4>
+                            <table class="top-emotes-table">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Emote</th>
+                                        <th></th>
+                                        <th>Total</th>
+                                        <th>Triggers</th>
+                                        <th>Avg</th>
+                                        <th>Peak</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% wispStats.topEmotes.forEach((emote, index) => { %>
+                                    <tr>
+                                        <td class="rank-cell"><%= index + 1 %></td>
+                                        <td class="emote-img-cell"><% if (emote.emoteLink) { %><img src="<%= emote.emoteLink %>" alt="<%= emote.emoteCode %>" class="emote-img"><% } %></td>
+                                        <td class="emote-cell"><%= emote.emoteCode %></td>
+                                        <td><%= emote.totalReactions.toLocaleString() %></td>
+                                        <td><%= emote.timesTriggered %></td>
+                                        <td><%= emote.avgPerTrigger %></td>
+                                        <td><%= emote.peakReaction.toLocaleString() %></td>
+                                    </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <% } %>
+
+                        <% if (wispStats.recentReactions && wispStats.recentReactions.length > 0) { %>
+                        <div class="recent-reactions-section">
+                            <h4>Recent Triggers</h4>
+                            <div class="recent-reactions-list">
+                                <% wispStats.recentReactions.slice(0, 8).forEach(reaction => { 
+                                    const timeAgo = (() => {
+                                        const seconds = Math.floor((new Date() - new Date(reaction.startTime)) / 1000);
+                                        if (seconds < 60) return 'just now';
+                                        const minutes = Math.floor(seconds / 60);
+                                        if (minutes < 60) return minutes + 'm ago';
+                                        const hours = Math.floor(minutes / 60);
+                                        if (hours < 24) return hours + 'h ago';
+                                        const days = Math.floor(hours / 24);
+                                        return days + 'd ago';
+                                    })();
+                                %>
+                                <div class="recent-reaction-item">
+                                    <div class="recent-reaction-emote">
+                                        <% if (reaction.emoteLink) { %><img src="<%= reaction.emoteLink %>" alt="<%= reaction.emoteCode %>" class="emote-img"><% } %>
+                                        <span class="emote-code"><%= reaction.emoteCode %></span>
+                                    </div>
+                                    <div class="recent-reaction-stats">
+                                        <span class="reaction-count"><%= reaction.reactions.toLocaleString() %></span>
+                                        <span class="reaction-time"><%= timeAgo %></span>
+                                    </div>
+                                </div>
+                                <% }) %>
+                            </div>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+                <% } %>
+
+                <!-- Role Wheel Stats -->
+                <% if (roleWheelStats.totalRedemptions > 0) { %>
+                <div class="section">
+                    <div class="reaction-stats">
+                        <div class="stats-header">
+                            <h2 style="border: none; padding: 0; margin: 0;">Role Wheel</h2>
+                            <% if (roleWheelStats.recentRedemptions.length > 0) { %>
+                            <span class="last-activity">Last spin: <%= roleWheelStats.recentRedemptions[0].discordUser %> → <%= roleWheelStats.recentRedemptions[0].roleName %></span>
+                            <% } %>
+                        </div>
+                        
+                        <div class="stats-cards">
+                            <div class="stats-card">
+                                <div class="stats-card-header">All Time</div>
+                                <div class="stats-card-value"><%= roleWheelStats.totalRedemptions.toLocaleString() %></div>
+                                <div class="stats-card-label">spins</div>
+                            </div>
+                            <div class="stats-card">
+                                <div class="stats-card-header">Unique Users</div>
+                                <div class="stats-card-value"><%= roleWheelStats.uniqueUsers.toLocaleString() %></div>
+                                <div class="stats-card-label">have spun</div>
+                            </div>
+                            <div class="stats-card">
+                                <div class="stats-card-header">Last 7 Days</div>
+                                <div class="stats-card-value"><%= roleWheelStats.recent.last7Days.toLocaleString() %></div>
+                                <div class="stats-card-label">spins</div>
+                            </div>
+                            <div class="stats-card">
+                                <div class="stats-card-header">Last 30 Days</div>
+                                <div class="stats-card-value"><%= roleWheelStats.recent.last30Days.toLocaleString() %></div>
+                                <div class="stats-card-label">spins</div>
+                            </div>
+                        </div>
+
+                        <% if (roleWheelStats.roleDistribution.length > 0) { %>
+                        <div class="top-emotes-section">
+                            <h4>Role Distribution</h4>
+                            <table class="top-emotes-table">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Role</th>
+                                        <th>Spins</th>
+                                        <th>%</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% roleWheelStats.roleDistribution.forEach((role, index) => { %>
+                                    <tr>
+                                        <td class="rank-cell"><%= index + 1 %></td>
+                                        <td class="emote-cell">
+                                            <span class="role-badge" style="background-color: <%= role.roleColor || '#888' %>; color: white; padding: 0.25em 0.5em; border-radius: 4px;"><%= role.roleName %></span>
+                                        </td>
+                                        <td><%= role.count.toLocaleString() %></td>
+                                        <td><%= role.percentage %>%</td>
+                                    </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <% } %>
+
+                        <% if (roleWheelStats.recentRedemptions && roleWheelStats.recentRedemptions.length > 0) { %>
+                        <div class="recent-reactions-section">
+                            <h4>Recent Spins</h4>
+                            <table class="top-emotes-table">
+                                <thead>
+                                    <tr>
+                                        <th>Twitch User</th>
+                                        <th>Discord User</th>
+                                        <th>Role</th>
+                                        <th>When</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% roleWheelStats.recentRedemptions.forEach(redemption => { 
+                                        const timeAgo = (() => {
+                                            const seconds = Math.floor((new Date() - new Date(redemption.timestamp)) / 1000);
+                                            if (seconds < 60) return 'just now';
+                                            const minutes = Math.floor(seconds / 60);
+                                            if (minutes < 60) return minutes + 'm ago';
+                                            const hours = Math.floor(minutes / 60);
+                                            if (hours < 24) return hours + 'h ago';
+                                            const days = Math.floor(hours / 24);
+                                            return days + 'd ago';
+                                        })();
+                                    %>
+                                    <tr>
+                                        <td><%= redemption.twitchUser %></td>
+                                        <td><%= redemption.discordUser %></td>
+                                        <td>
+                                            <span class="role-badge" style="background-color: <%= redemption.roleColor || '#888' %>; color: white; padding: 0.25em 0.5em; border-radius: 4px;"><%= redemption.roleName %></span>
+                                        </td>
+                                        <td><%= timeAgo %></td>
+                                    </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+    
+    <%- include("../partials/footer") %>
+</body>
+</html>

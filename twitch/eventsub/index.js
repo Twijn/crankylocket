@@ -1,7 +1,7 @@
 const { ApiClient } = require("@twurple/api");
 const { EventSubWsListener } = require("@twurple/eventsub-ws");
 
-const {DiscordRole, TwitchReward} = require("../../schemas");
+const {DiscordRole, TwitchReward, RoleWheelRedemption} = require("../../schemas");
 const utils = require("../../utils");
 const discordClient = require("../../discord");
 
@@ -128,7 +128,24 @@ module.exports = function(apiClient) {
             return cancelRedemption("Failed to determine role to add! Try again later.");
         }
 
-        user.roles.add(chosenRole._id).then(() => {
+        user.roles.add(chosenRole._id).then(async () => {
+            // Save the redemption to the database
+            try {
+                await RoleWheelRedemption.create({
+                    twitchUser: redemption.userId,
+                    twitchUserDisplayName: redemption.userName,
+                    discordUserId: user.id,
+                    discordUserName: user.user.username,
+                    roleId: chosenRole._id,
+                    roleName: chosenRole.name,
+                    roleColor: chosenRole.color,
+                    broadcasterId: redemption.broadcasterId,
+                    redemptionId: redemption.id,
+                });
+            } catch (err) {
+                console.error("Failed to save role wheel redemption:", err);
+            }
+
             const numberOfWebsockets = broadcast({
                 id: redemption.id,
                 type: "role-wheel",

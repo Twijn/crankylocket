@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("../partials/head") %>
+
+    <link rel="stylesheet" href="/assets/css/master.css">
+    <link rel="stylesheet" href="/assets/css/inputs.css">
+
+    <title>Logged Out - Shrine Manager</title>
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logout-box {
+            text-align: center;
+            padding: 2rem;
+        }
+        .logout-box h1 {
+            margin-bottom: 0.5rem;
+        }
+        .logout-box p {
+            color: var(--color-text-muted);
+            margin-bottom: 1.5rem;
+        }
+        .logout-box .button {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="logout-box">
+        <h1>Logged out</h1>
+        <p>You can close this window.</p>
+        <a href="/auth" class="button">Log back in</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<%
+const pageTitle = 'Manage Rewards';
+const pageDescription = 'Configure channel point rewards and role wheel triggers.';
+const currentPath = '/rewards';
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include("../partials/head") %>
+
+    <link rel="stylesheet" href="/assets/css/navigation.css">
+    <link rel="stylesheet" href="/assets/css/tables.css">
+    <link rel="stylesheet" href="/assets/css/inputs.css">
+    <link rel="stylesheet" href="/assets/css/alerts.css">
+
+    <script src="/assets/js/navigation.js" defer></script>
+    <script src="/assets/js/manager.js" defer></script>
+
+    <title><%= pageTitle %> - Shrine Manager</title>
+</head>
+<body>
+    <%- include("../partials/navigation", { currentPath }) %>
+    
+    <main class="main-content">
+        <div class="container container-lg">
+            <% if (locals.restart) { %>
+            <script>
+            setTimeout(() => {
+                window.location.href = "/rewards?info=Changes%20applied%20successfully";
+            }, 3000);
+            </script>
+            <div class="alert alert-info alert-fixed">
+                <strong>Info:</strong>
+                Restarting services, please wait...
+            </div>
+            <% } %>
+            <% if (locals.error) { %>
+            <div class="alert alert-danger alert-fixed">
+                <strong>Error:</strong>
+                <%= error %>
+            </div>
+            <% } else if (locals.info) { %>
+            <div class="alert alert-info alert-fixed">
+                <strong>Info:</strong>
+                <%= info %>
+            </div>
+            <% } %>
+            
+            <div class="page-header">
+                <h1 class="page-title"><%= pageTitle %></h1>
+                <p class="page-description"><%= pageDescription %></p>
+            </div>
+
+            <div class="col col-12">
+                <form method="POST" action="/rewards" class="section">
+                    <h2>Channel Point Rewards</h2>
+                    <p>It is preferred to utilize a reward for the role wheel that the bot creates, as it is able to approve or deny the redemption. To do so, click the button below.</p>
+                    <a href="/rewards/add" class="button">Add Reward from Bot</a>
+                    
+                    <% if (broadcasterRewards.length > 0) { %>
+                    <table class="mt-lg">
+                        <thead>
+                            <tr>
+                                <th>Reward</th>
+                                <th>Trigger Role Wheel</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% broadcasterRewards.forEach(broadcasterReward => { %>
+                            <tr>
+                                <th colspan="2"><%= broadcasterReward.broadcasterName %></th>
+                            </tr>
+                            <% broadcasterReward.rewards.forEach(reward => { %>
+                            <tr>
+                                <td><%= reward.title %> (<%= reward.cost %> points)</td>
+                                <td><input type="checkbox" name="roleAdd[<%= reward._id %>]" id="<%= reward._id %>"<%- reward.settings.roleAdd ? ' checked="checked"' : "" %>></td>
+                            </tr>
+                            <% })
+                               }) %>
+                        </tbody>
+                    </table>
+                    <input type="submit" value="Update Rewards">
+                    <% } else { %>
+                    <div class="empty-state mt-lg">
+                        <p class="text-muted text-center">No rewards configured yet. Add a reward to get started!</p>
+                    </div>
+                    <% } %>
+                </form>
+            </div>
+        </div>
+    </main>
+    
+    <%- include("../partials/footer") %>
+</body>
+</html>
