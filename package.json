@@ -1,6 +1,6 @@
 {
   "name": "crankylocket",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Commission work for crankylocket",
   "main": "app.js",
   "scripts": {
