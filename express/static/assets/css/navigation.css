@@ -255,6 +255,41 @@
     .nav-link {
         padding: var(--space-md);
         border-radius: var(--radius-md);
+        color: var(--color-text);
+    }
+
+    .nav-link:hover {
+        background-color: var(--color-bg-hover);
+        color: var(--color-text);
+    }
+
+    .nav-link.active {
+        background-color: var(--color-primary);
+        color: var(--color-text-inverse);
+    }
+
+    .nav-link.active:hover {
+        background-color: var(--color-primary-hover);
+    }
+
+    .nav-link-secondary {
+        color: var(--color-text);
+        border-color: var(--color-border);
+    }
+
+    .nav-link-secondary:hover {
+        background-color: var(--color-bg-hover);
+        border-color: var(--color-border);
+        color: var(--color-text);
+    }
+
+    .nav-link-danger {
+        color: var(--color-danger);
+    }
+
+    .nav-link-danger:hover {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: var(--color-danger);
     }
 
     .nav-footer {

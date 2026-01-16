@@ -46,19 +46,19 @@ const currentPath = '/';
                     <h2>Site Status</h2>
                     <div class="stats-cards">
                         <div class="stats-card">
-                            <div class="stats-card-header">Overlay Connections</div>
+                            <div class="stats-card-header">Active Overlay Connections</div>
                             <div class="stats-card-value"><%= wsStats.currentConnections %></div>
-                            <div class="stats-card-label">active now</div>
+                            <div class="stats-card-label">currently connected</div>
                         </div>
                         <div class="stats-card">
-                            <div class="stats-card-header">Total Connections</div>
+                            <div class="stats-card-header">Session Connections</div>
                             <div class="stats-card-value"><%= wsStats.totalConnections.toLocaleString() %></div>
-                            <div class="stats-card-label">since startup</div>
+                            <div class="stats-card-label">since server started</div>
                         </div>
                         <div class="stats-card">
-                            <div class="stats-card-header">Messages Sent</div>
+                            <div class="stats-card-header">WebSocket Messages</div>
                             <div class="stats-card-value"><%= wsStats.messagesSent.toLocaleString() %></div>
-                            <div class="stats-card-label">to overlays</div>
+                            <div class="stats-card-label">sent to overlay clients</div>
                         </div>
                     </div>
                     <div class="uptime-info">
@@ -79,38 +79,38 @@ const currentPath = '/';
                         
                         <div class="stats-cards">
                             <div class="stats-card">
-                                <div class="stats-card-header">All Time</div>
+                                <div class="stats-card-header">Total Reactions (All Time)</div>
                                 <div class="stats-card-value"><%= wispStats.totalReactions.toLocaleString() %></div>
-                                <div class="stats-card-label">reactions across <%= wispStats.reactionCount.toLocaleString() %> triggers</div>
+                                <div class="stats-card-label">across <%= wispStats.reactionCount.toLocaleString() %> emote triggers</div>
                             </div>
                             <div class="stats-card">
-                                <div class="stats-card-header">Last 7 Days</div>
+                                <div class="stats-card-header">Reactions (7 Days)</div>
                                 <div class="stats-card-value"><%= wispStats.recent.last7Days.reactions.toLocaleString() %></div>
-                                <div class="stats-card-label"><%= wispStats.recent.last7Days.triggers %> triggers</div>
+                                <div class="stats-card-label"><%= wispStats.recent.last7Days.triggers %> emote triggers</div>
                             </div>
                             <div class="stats-card">
-                                <div class="stats-card-header">Last 30 Days</div>
+                                <div class="stats-card-header">Reactions (30 Days)</div>
                                 <div class="stats-card-value"><%= wispStats.recent.last30Days.reactions.toLocaleString() %></div>
-                                <div class="stats-card-label"><%= wispStats.recent.last30Days.triggers %> triggers</div>
+                                <div class="stats-card-label"><%= wispStats.recent.last30Days.triggers %> emote triggers</div>
                             </div>
                         </div>
                         <div class="stats-cards">
                             <% if (wispStats.highestReaction) { %>
                             <div class="stats-card stats-card--highlight">
-                                <div class="stats-card-header">Peak Reaction</div>
+                                <div class="stats-card-header">Highest Single Reaction</div>
                                 <div class="stats-card-value"><%= wispStats.highestReaction.reactions.toLocaleString() %></div>
-                                <div class="stats-card-label"><%= wispStats.highestReaction.emoteCode %></div>
+                                <div class="stats-card-label">from <%= wispStats.highestReaction.emoteCode %></div>
                             </div>
                             <% } %>
                             <div class="stats-card">
-                                <div class="stats-card-header">Avg Reactions</div>
+                                <div class="stats-card-header">Average Reactions</div>
                                 <div class="stats-card-value"><%= wispStats.avgReactions %></div>
-                                <div class="stats-card-label">per trigger</div>
+                                <div class="stats-card-label">per emote trigger</div>
                             </div>
                             <div class="stats-card">
-                                <div class="stats-card-header">Unique Emotes</div>
+                                <div class="stats-card-header">Unique Emotes Used</div>
                                 <div class="stats-card-value"><%= wispStats.uniqueEmotesUsed %></div>
-                                <div class="stats-card-label">triggered reactions</div>
+                                <div class="stats-card-label">have triggered reactions</div>
                             </div>
                         </div>
 
@@ -193,24 +193,24 @@ const currentPath = '/';
                         
                         <div class="stats-cards">
                             <div class="stats-card">
-                                <div class="stats-card-header">All Time</div>
+                                <div class="stats-card-header">Total Spins (All Time)</div>
                                 <div class="stats-card-value"><%= roleWheelStats.totalRedemptions.toLocaleString() %></div>
-                                <div class="stats-card-label">spins</div>
+                                <div class="stats-card-label">role wheel redemptions</div>
                             </div>
                             <div class="stats-card">
-                                <div class="stats-card-header">Unique Users</div>
+                                <div class="stats-card-header">Unique Participants</div>
                                 <div class="stats-card-value"><%= roleWheelStats.uniqueUsers.toLocaleString() %></div>
-                                <div class="stats-card-label">have spun</div>
+                                <div class="stats-card-label">users have spun the wheel</div>
                             </div>
                             <div class="stats-card">
-                                <div class="stats-card-header">Last 7 Days</div>
+                                <div class="stats-card-header">Spins (7 Days)</div>
                                 <div class="stats-card-value"><%= roleWheelStats.recent.last7Days.toLocaleString() %></div>
-                                <div class="stats-card-label">spins</div>
+                                <div class="stats-card-label">recent redemptions</div>
                             </div>
                             <div class="stats-card">
-                                <div class="stats-card-header">Last 30 Days</div>
+                                <div class="stats-card-header">Spins (30 Days)</div>
                                 <div class="stats-card-value"><%= roleWheelStats.recent.last30Days.toLocaleString() %></div>
-                                <div class="stats-card-label">spins</div>
+                                <div class="stats-card-label">recent redemptions</div>
                             </div>
                         </div>
 
